@@ -1,30 +1,15 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import nodemailer from "nodemailer";
 import { Resend } from "resend";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
 dotenv.config();
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 const app = express();
-
-// Helper to send email via Resend (non-blocking)
-function sendResendEmail({ to, subject, html, replyTo }) {
-  const payload = {
-    from: process.env.CONTACT_EMAIL,
-    to,
-    subject,
-    html,
-  };
-  if (replyTo) payload.reply_to = replyTo;
-  resend.emails
-    .send(payload)
-    .then((r) => console.log("Resend email sent", r))
-    .catch((e) => console.error("Resend error:", e));
-}
 const PORT = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,7 +17,12 @@ const dataDir = path.join(__dirname, "data");
 const contactsFile = path.join(dataDir, "contacts.json");
 const devisFile = path.join(dataDir, "devis.json");
 
-// Middleware
+// The verified Resend sender domain (always works without domain verification)
+const FROM_ADDRESS = "Canal Informatique <onboarding@resend.dev>";
+// Where all form notifications land
+const TO_ADDRESS = process.env.TARGET_EMAIL || "lassouadaya313@gmail.com";
+
+// ── Middleware ──────────────────────────────────────────────────────────────
 app.use(cors({
   origin: function(origin, callback) {
     const allowed = [
@@ -40,7 +30,6 @@ app.use(cors({
       "https://canal-informatique-1.onrender.com",
       ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(",") : [])
     ];
-    // Allow requests with no origin (curl, Postman, server-to-server)
     if (!origin || allowed.includes(origin)) {
       callback(null, true);
     } else {
@@ -51,7 +40,7 @@ app.use(cors({
 }));
 app.use(express.json({ limit: "1mb" }));
 
-// Helper to write JSON data safely
+// ── Helpers ─────────────────────────────────────────────────────────────────
 async function appendJsonData(filePath, newItem) {
   await fs.mkdir(dataDir, { recursive: true });
   let items = [];
@@ -67,7 +56,20 @@ async function appendJsonData(filePath, newItem) {
   return items;
 }
 
-// Health Check Endpoint
+function sendEmail({ subject, html, replyTo }) {
+  resend.emails
+    .send({
+      from: FROM_ADDRESS,
+      to: TO_ADDRESS,
+      reply_to: replyTo || undefined,
+      subject,
+      html,
+    })
+    .then((r) => console.log("✅ Email sent to", TO_ADDRESS, r))
+    .catch((e) => console.error("❌ Resend error:", e?.message || e));
+}
+
+// ── Health Check ─────────────────────────────────────────────────────────────
 app.get("/api/health", (_, res) => {
   res.json({
     success: true,
@@ -77,7 +79,7 @@ app.get("/api/health", (_, res) => {
   });
 });
 
-// Contact Form Endpoint
+// ── Contact Form ─────────────────────────────────────────────────────────────
 app.post("/api/contact", async (req, res) => {
   try {
     const { name, email, phone = "", subject, message } = req.body;
@@ -106,29 +108,30 @@ app.post("/api/contact", async (req, res) => {
 
     await appendJsonData(contactsFile, contact);
 
-    // Respond immediately — don't wait for email
+    // Respond immediately
     res.status(201).json({
       success: true,
       message: "Votre demande a bien été envoyée. Notre équipe vous contactera sous 24h."
     });
 
-    // Send email notification in background (non-blocking)
-    if (process.env.CONTACT_EMAIL)    sendResendEmail({
-      to: process.env.TARGET_EMAIL,
+    // Fire email in background
+    sendEmail({
       subject: `[Contact Website] ${contact.subject}`,
+      replyTo: contact.email,
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #162337;">
-          <h2 style="color: #256bd3;">Nouvelle demande de contact web</h2>
-          <p><strong>Nom:</strong> ${contact.name}</p>
-          <p><strong>Email:</strong> ${contact.email}</p>
-          <p><strong>Téléphone:</strong> ${contact.phone || "Non renseigné"}</p>
-          <p><strong>Sujet:</strong> ${contact.subject}</p>
-          <hr style="border: 0; border-top: 1px solid #ddd;" />
-          <p><strong>Message:</strong></p>
-          <p style="white-space: pre-wrap; background: #f5f8fc; padding: 14px; border-radius: 6px;">${contact.message}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #162337; border: 1px solid #dde4ef; border-radius: 8px;">
+          <h2 style="color: #256bd3; border-bottom: 2px solid #256bd3; padding-bottom: 10px;">📬 Nouvelle demande de contact</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px; font-weight: bold;">Nom:</td><td style="padding: 8px;">${contact.name}</td></tr>
+            <tr style="background:#f5f8fc;"><td style="padding: 8px; font-weight: bold;">Email:</td><td style="padding: 8px;"><a href="mailto:${contact.email}">${contact.email}</a></td></tr>
+            <tr><td style="padding: 8px; font-weight: bold;">Téléphone:</td><td style="padding: 8px;">${contact.phone || "Non renseigné"}</td></tr>
+            <tr style="background:#f5f8fc;"><td style="padding: 8px; font-weight: bold;">Sujet:</td><td style="padding: 8px;">${contact.subject}</td></tr>
+          </table>
+          <h3 style="color: #256bd3; margin-top: 20px;">Message:</h3>
+          <p style="white-space: pre-wrap; background: #f5f8fc; padding: 14px; border-radius: 6px; line-height: 1.6;">${contact.message}</p>
+          <p style="color: #888; font-size: 12px; margin-top: 20px;">Envoyé depuis canal-informatique.onrender.com · ${new Date().toLocaleString("fr-FR")}</p>
         </div>
       `,
-      replyTo: contact.email,
     });
   } catch (error) {
     console.error("Contact error:", error);
@@ -139,7 +142,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Devis Request Endpoint
+// ── Devis Form ───────────────────────────────────────────────────────────────
 app.post("/api/devis", async (req, res) => {
   try {
     const { serviceType, size, urgency, name, email, phone, company = "", details = "" } = req.body;
@@ -171,31 +174,35 @@ app.post("/api/devis", async (req, res) => {
 
     await appendJsonData(devisFile, devisRequest);
 
-    // Respond immediately — don't wait for email
+    // Respond immediately
     res.status(201).json({
       success: true,
       message: "Votre demande de devis a été enregistrée avec succès. Un conseiller vous contactera sous 2h."
     });
 
-    // Send email notification in background (non-blocking)
-    if (process.env.CONTACT_EMAIL)    sendResendEmail({
-      to: process.env.CONTACT_EMAIL,
-      subject: `[Demande Devis] ${devisRequest.serviceType} - ${devisRequest.name}`,
+    // Fire email in background
+    sendEmail({
+      subject: `[Demande Devis] ${devisRequest.serviceType} — ${devisRequest.name}`,
+      replyTo: devisRequest.email,
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #162337;">
-          <h2 style="color: #256bd3;">Nouvelle Simulation de Devis Informatique</h2>
-          <p><strong>Service demandé:</strong> ${devisRequest.serviceType}</p>
-          <p><strong>Taille de parc:</strong> ${devisRequest.size}</p>
-          <p><strong>Urgence:</strong> ${devisRequest.urgency}</p>
-          <hr style="border: 0; border-top: 1px solid #ddd;" />
-          <p><strong>Nom Client:</strong> ${devisRequest.name}</p>
-          <p><strong>Entreprise:</strong> ${devisRequest.company || "Particulier/N.A."}</p>
-          <p><strong>Email:</strong> ${devisRequest.email}</p>
-          <p><strong>Téléphone:</strong> ${devisRequest.phone}</p>
-          <p><strong>Détails:</strong> ${devisRequest.details || "Aucune précision"}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #162337; border: 1px solid #dde4ef; border-radius: 8px;">
+          <h2 style="color: #256bd3; border-bottom: 2px solid #256bd3; padding-bottom: 10px;">🖥️ Nouvelle demande de devis</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px; font-weight: bold;">Service:</td><td style="padding: 8px;">${devisRequest.serviceType}</td></tr>
+            <tr style="background:#f5f8fc;"><td style="padding: 8px; font-weight: bold;">Taille de parc:</td><td style="padding: 8px;">${devisRequest.size}</td></tr>
+            <tr><td style="padding: 8px; font-weight: bold;">Urgence:</td><td style="padding: 8px;">${devisRequest.urgency}</td></tr>
+          </table>
+          <h3 style="color: #256bd3; margin-top: 20px;">Coordonnées client:</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px; font-weight: bold;">Nom:</td><td style="padding: 8px;">${devisRequest.name}</td></tr>
+            <tr style="background:#f5f8fc;"><td style="padding: 8px; font-weight: bold;">Entreprise:</td><td style="padding: 8px;">${devisRequest.company || "Particulier / N.A."}</td></tr>
+            <tr><td style="padding: 8px; font-weight: bold;">Email:</td><td style="padding: 8px;"><a href="mailto:${devisRequest.email}">${devisRequest.email}</a></td></tr>
+            <tr style="background:#f5f8fc;"><td style="padding: 8px; font-weight: bold;">Téléphone:</td><td style="padding: 8px;">${devisRequest.phone}</td></tr>
+          </table>
+          ${devisRequest.details ? `<h3 style="color: #256bd3; margin-top: 20px;">Détails:</h3><p style="white-space: pre-wrap; background: #f5f8fc; padding: 14px; border-radius: 6px;">${devisRequest.details}</p>` : ""}
+          <p style="color: #888; font-size: 12px; margin-top: 20px;">Envoyé depuis canal-informatique.onrender.com · ${new Date().toLocaleString("fr-FR")}</p>
         </div>
       `,
-      replyTo: devisRequest.email,
     });
   } catch (error) {
     console.error("Devis error:", error);
@@ -206,7 +213,7 @@ app.post("/api/devis", async (req, res) => {
   }
 });
 
-// Endpoint GET Contacts (Admin)
+// ── Admin Endpoints ───────────────────────────────────────────────────────────
 app.get("/api/contacts", async (_, res) => {
   try {
     const data = await fs.readFile(contactsFile, "utf8");
@@ -216,7 +223,6 @@ app.get("/api/contacts", async (_, res) => {
   }
 });
 
-// Endpoint GET Devis (Admin)
 app.get("/api/devis", async (_, res) => {
   try {
     const data = await fs.readFile(devisFile, "utf8");
@@ -226,9 +232,12 @@ app.get("/api/devis", async (_, res) => {
   }
 });
 
-// 404 Handler
+// ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_, res) => res.status(404).json({ success: false, message: "Route introuvable." }));
 
+// ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`Canal Informatique API running on http://localhost:${PORT}`);
+  console.log(`  → Emails will be sent TO: ${TO_ADDRESS}`);
+  console.log(`  → Emails sent FROM: ${FROM_ADDRESS}`);
 });
