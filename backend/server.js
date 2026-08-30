@@ -77,14 +77,21 @@ app.post("/api/contact", async (req, res) => {
     await appendJsonData(contactsFile, contact);
 
     // Email notification if SMTP configured
-    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.CONTACT_EMAIL) {
+    if ((process.env.SMTP_HOST || process.env.SMTP_SERVICE) && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.CONTACT_EMAIL) {
       try {
-        const transporter = nodemailer.createTransport({
-          host: process.env.SMTP_HOST,
-          port: Number(process.env.SMTP_PORT || 587),
-          secure: Number(process.env.SMTP_PORT) === 465,
-          auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-        });
+        const transporter = nodemailer.createTransport(
+          process.env.SMTP_SERVICE
+            ? {
+                service: process.env.SMTP_SERVICE,
+                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+              }
+            : {
+                host: process.env.SMTP_HOST,
+                port: Number(process.env.SMTP_PORT || 587),
+                secure: Number(process.env.SMTP_PORT) === 465,
+                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+              }
+        );
 
         await transporter.sendMail({
           from: `"Canal Informatique Site" <${process.env.SMTP_USER}>`,
@@ -155,14 +162,21 @@ app.post("/api/devis", async (req, res) => {
     await appendJsonData(devisFile, devisRequest);
 
     // Email notification if SMTP configured
-    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.CONTACT_EMAIL) {
+    if ((process.env.SMTP_HOST || process.env.SMTP_SERVICE) && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.CONTACT_EMAIL) {
       try {
-        const transporter = nodemailer.createTransport({
-          host: process.env.SMTP_HOST,
-          port: Number(process.env.SMTP_PORT || 587),
-          secure: Number(process.env.SMTP_PORT) === 465,
-          auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-        });
+        const transporter = nodemailer.createTransport(
+          process.env.SMTP_SERVICE
+            ? {
+                service: process.env.SMTP_SERVICE,
+                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+              }
+            : {
+                host: process.env.SMTP_HOST,
+                port: Number(process.env.SMTP_PORT || 587),
+                secure: Number(process.env.SMTP_PORT) === 465,
+                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+              }
+        );
 
         await transporter.sendMail({
           from: `"Canal Informatique Site" <${process.env.SMTP_USER}>`,
