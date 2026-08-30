@@ -89,50 +89,38 @@ app.post("/api/contact", async (req, res) => {
 
     await appendJsonData(contactsFile, contact);
 
-    // Email notification if SMTP configured
-    if ((process.env.SMTP_HOST || process.env.SMTP_SERVICE) && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.CONTACT_EMAIL) {
-      try {
-        const transporter = nodemailer.createTransport(
-          process.env.SMTP_SERVICE
-            ? {
-                service: process.env.SMTP_SERVICE,
-                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-              }
-            : {
-                host: process.env.SMTP_HOST,
-                port: Number(process.env.SMTP_PORT || 587),
-                secure: Number(process.env.SMTP_PORT) === 465,
-                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-              }
-        );
-
-        await transporter.sendMail({
-          from: `"Canal Informatique Site" <${process.env.SMTP_USER}>`,
-          to: process.env.CONTACT_EMAIL,
-          replyTo: contact.email,
-          subject: `[Contact Website] ${contact.subject}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; color: #162337;">
-              <h2 style="color: #256bd3;">Nouvelle demande de contact web</h2>
-              <p><strong>Nom:</strong> ${contact.name}</p>
-              <p><strong>Email:</strong> ${contact.email}</p>
-              <p><strong>Téléphone:</strong> ${contact.phone || "Non renseigné"}</p>
-              <p><strong>Sujet:</strong> ${contact.subject}</p>
-              <hr style="border: 0; border-top: 1px solid #ddd;" />
-              <p><strong>Message:</strong></p>
-              <p style="white-space: pre-wrap; background: #f5f8fc; padding: 14px; border-radius: 6px;">${contact.message}</p>
-            </div>
-          `
-        });
-      } catch (mailErr) {
-        console.error("Nodemailer error (contact):", mailErr.message);
-      }
-    }
-
+    // Respond immediately — don't wait for email
     res.status(201).json({
       success: true,
       message: "Votre demande a bien été envoyée. Notre équipe vous contactera sous 24h."
     });
+
+    // Send email notification in background (non-blocking)
+    if ((process.env.SMTP_HOST || process.env.SMTP_SERVICE) && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.CONTACT_EMAIL) {
+      const transporter = nodemailer.createTransport(
+        process.env.SMTP_SERVICE
+          ? { service: process.env.SMTP_SERVICE, auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } }
+          : { host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT || 587), secure: Number(process.env.SMTP_PORT) === 465, auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } }
+      );
+      transporter.sendMail({
+        from: `"Canal Informatique Site" <${process.env.SMTP_USER}>`,
+        to: process.env.CONTACT_EMAIL,
+        replyTo: contact.email,
+        subject: `[Contact Website] ${contact.subject}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; color: #162337;">
+            <h2 style="color: #256bd3;">Nouvelle demande de contact web</h2>
+            <p><strong>Nom:</strong> ${contact.name}</p>
+            <p><strong>Email:</strong> ${contact.email}</p>
+            <p><strong>Téléphone:</strong> ${contact.phone || "Non renseigné"}</p>
+            <p><strong>Sujet:</strong> ${contact.subject}</p>
+            <hr style="border: 0; border-top: 1px solid #ddd;" />
+            <p><strong>Message:</strong></p>
+            <p style="white-space: pre-wrap; background: #f5f8fc; padding: 14px; border-radius: 6px;">${contact.message}</p>
+          </div>
+        `
+      }).then(() => console.log("Email contact envoyé.")).catch(err => console.error("Nodemailer error (contact):", err.message));
+    }
   } catch (error) {
     console.error("Contact error:", error);
     res.status(500).json({
@@ -174,52 +162,40 @@ app.post("/api/devis", async (req, res) => {
 
     await appendJsonData(devisFile, devisRequest);
 
-    // Email notification if SMTP configured
-    if ((process.env.SMTP_HOST || process.env.SMTP_SERVICE) && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.CONTACT_EMAIL) {
-      try {
-        const transporter = nodemailer.createTransport(
-          process.env.SMTP_SERVICE
-            ? {
-                service: process.env.SMTP_SERVICE,
-                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-              }
-            : {
-                host: process.env.SMTP_HOST,
-                port: Number(process.env.SMTP_PORT || 587),
-                secure: Number(process.env.SMTP_PORT) === 465,
-                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-              }
-        );
-
-        await transporter.sendMail({
-          from: `"Canal Informatique Site" <${process.env.SMTP_USER}>`,
-          to: process.env.CONTACT_EMAIL,
-          replyTo: devisRequest.email,
-          subject: `[Demande Devis] ${devisRequest.serviceType} - ${devisRequest.name}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; color: #162337;">
-              <h2 style="color: #256bd3;">Nouvelle Simulation de Devis Informatique</h2>
-              <p><strong>Service demandé:</strong> ${devisRequest.serviceType}</p>
-              <p><strong>Taille de parc:</strong> ${devisRequest.size}</p>
-              <p><strong>Urgence:</strong> ${devisRequest.urgency}</p>
-              <hr style="border: 0; border-top: 1px solid #ddd;" />
-              <p><strong>Nom Client:</strong> ${devisRequest.name}</p>
-              <p><strong>Entreprise:</strong> ${devisRequest.company || "Particulier/N.A."}</p>
-              <p><strong>Email:</strong> ${devisRequest.email}</p>
-              <p><strong>Téléphone:</strong> ${devisRequest.phone}</p>
-              <p><strong>Détails:</strong> ${devisRequest.details || "Aucune précision"}</p>
-            </div>
-          `
-        });
-      } catch (mailErr) {
-        console.error("Nodemailer error (devis):", mailErr.message);
-      }
-    }
-
+    // Respond immediately — don't wait for email
     res.status(201).json({
       success: true,
       message: "Votre demande de devis a été enregistrée avec succès. Un conseiller vous contactera sous 2h."
     });
+
+    // Send email notification in background (non-blocking)
+    if ((process.env.SMTP_HOST || process.env.SMTP_SERVICE) && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.CONTACT_EMAIL) {
+      const transporter = nodemailer.createTransport(
+        process.env.SMTP_SERVICE
+          ? { service: process.env.SMTP_SERVICE, auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } }
+          : { host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT || 587), secure: Number(process.env.SMTP_PORT) === 465, auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } }
+      );
+      transporter.sendMail({
+        from: `"Canal Informatique Site" <${process.env.SMTP_USER}>`,
+        to: process.env.CONTACT_EMAIL,
+        replyTo: devisRequest.email,
+        subject: `[Demande Devis] ${devisRequest.serviceType} - ${devisRequest.name}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; color: #162337;">
+            <h2 style="color: #256bd3;">Nouvelle Simulation de Devis Informatique</h2>
+            <p><strong>Service demandé:</strong> ${devisRequest.serviceType}</p>
+            <p><strong>Taille de parc:</strong> ${devisRequest.size}</p>
+            <p><strong>Urgence:</strong> ${devisRequest.urgency}</p>
+            <hr style="border: 0; border-top: 1px solid #ddd;" />
+            <p><strong>Nom Client:</strong> ${devisRequest.name}</p>
+            <p><strong>Entreprise:</strong> ${devisRequest.company || "Particulier/N.A."}</p>
+            <p><strong>Email:</strong> ${devisRequest.email}</p>
+            <p><strong>Téléphone:</strong> ${devisRequest.phone}</p>
+            <p><strong>Détails:</strong> ${devisRequest.details || "Aucune précision"}</p>
+          </div>
+        `
+      }).then(() => console.log("Email devis envoyé.")).catch(err => console.error("Nodemailer error (devis):", err.message));
+    }
   } catch (error) {
     console.error("Devis error:", error);
     res.status(500).json({
