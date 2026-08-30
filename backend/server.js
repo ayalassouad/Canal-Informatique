@@ -17,7 +17,20 @@ const devisFile = path.join(dataDir, "devis.json");
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(",") : true
+  origin: function(origin, callback) {
+    const allowed = [
+      "http://localhost:5173",
+      "https://canal-informatique-1.onrender.com",
+      ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(",") : [])
+    ];
+    // Allow requests with no origin (curl, Postman, server-to-server)
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS: " + origin));
+    }
+  },
+  credentials: true
 }));
 app.use(express.json({ limit: "1mb" }));
 
