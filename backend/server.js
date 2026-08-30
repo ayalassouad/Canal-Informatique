@@ -8,7 +8,17 @@ import { fileURLToPath } from "url";
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend = null;
+function getResend() {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) {
+      console.error("⚠️  RESEND_API_KEY env var is not set — emails disabled");
+      return null;
+    }
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 const app = express();
 const PORT = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
@@ -57,7 +67,9 @@ async function appendJsonData(filePath, newItem) {
 }
 
 function sendEmail({ subject, html, replyTo }) {
-  resend.emails
+  const client = getResend();
+  if (!client) return;
+  client.emails
     .send({
       from: FROM_ADDRESS,
       to: TO_ADDRESS,
