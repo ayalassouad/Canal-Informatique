@@ -1,5 +1,4 @@
 node_modules/
-dist/
 backend/data/contacts.json
 backend/data/devis.json
 backend/.env
