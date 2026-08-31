@@ -55,7 +55,7 @@ export default function Footer({ scrollTo, onOpenDevis }) {
 
       <div className="footer-bottom">
         <p>© {currentYear} Canal Informatique. Tous droits réservés.</p>
-        <p>Conception & Infrastructure Web — Canal Informatique Maroc</p>
+        <p>Conception & Infrastructure Web — Canal Informatique Maroc | <a href="http://localhost:8501" target="_blank" rel="noreferrer" style={{ color: "var(--cyan-glow)", textDecoration: "none" }}>Admin Dashboard</a></p>
       </div>
     </footer>
   );
