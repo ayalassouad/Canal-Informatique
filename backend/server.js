@@ -12,8 +12,7 @@ let _resend = null;
 function getResend() {
   if (!_resend) {
     if (!process.env.RESEND_API_KEY) {
-      console.error("⚠️  RESEND_API_KEY env var is not set — emails disabled");
-      return null;
+      throw new Error("RESEND_API_KEY is not configured");
     }
     _resend = new Resend(process.env.RESEND_API_KEY);
   }
@@ -84,19 +83,17 @@ async function appendJsonData(filePath, newItem) {
   return items;
 }
 
-function sendEmail({ subject, html, replyTo }) {
+async function sendEmail({ subject, html, replyTo }) {
   const client = getResend();
-  if (!client) return;
-  client.emails
-    .send({
-      from: FROM_ADDRESS,
-      to: TO_ADDRESS,
-      reply_to: replyTo || undefined,
-      subject,
-      html,
-    })
-    .then((r) => console.log("✅ Email sent to", TO_ADDRESS, r))
-    .catch((e) => console.error("❌ Resend error:", e?.message || e));
+  const { data, error } = await client.emails.send({
+    from: FROM_ADDRESS,
+    to: TO_ADDRESS,
+    reply_to: replyTo || undefined,
+    subject,
+    html,
+  });
+  if (error) throw new Error(error.message || "Resend rejected the email");
+  console.log("✅ Email accepted by Resend for", TO_ADDRESS, data?.id || "");
 }
 
 // ── Health Check ─────────────────────────────────────────────────────────────
@@ -138,14 +135,7 @@ app.post("/api/contact", async (req, res) => {
 
     await appendJsonData(contactsFile, contact);
 
-    // Respond immediately
-    res.status(201).json({
-      success: true,
-      message: "Votre demande a bien été envoyée. Notre équipe vous contactera sous 24h."
-    });
-
-    // Fire email in background
-    sendEmail({
+    await sendEmail({
       subject: `[Contact Website] ${contact.subject}`,
       replyTo: contact.email,
       html: `
@@ -162,6 +152,11 @@ app.post("/api/contact", async (req, res) => {
           <p style="color: #888; font-size: 12px; margin-top: 20px;">Envoyé depuis canal-informatique.onrender.com · ${new Date().toLocaleString("fr-FR")}</p>
         </div>
       `,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Votre demande a bien été envoyée. Notre équipe vous contactera sous 24h."
     });
   } catch (error) {
     console.error("Contact error:", error);
@@ -204,14 +199,7 @@ app.post("/api/devis", async (req, res) => {
 
     await appendJsonData(devisFile, devisRequest);
 
-    // Respond immediately
-    res.status(201).json({
-      success: true,
-      message: "Votre demande de devis a été enregistrée avec succès. Un conseiller vous contactera sous 2h."
-    });
-
-    // Fire email in background
-    sendEmail({
+    await sendEmail({
       subject: `[Demande Devis] ${devisRequest.serviceType} — ${devisRequest.name}`,
       replyTo: devisRequest.email,
       html: `
@@ -233,6 +221,11 @@ app.post("/api/devis", async (req, res) => {
           <p style="color: #888; font-size: 12px; margin-top: 20px;">Envoyé depuis canal-informatique.onrender.com · ${new Date().toLocaleString("fr-FR")}</p>
         </div>
       `,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Votre demande de devis a été enregistrée avec succès. Un conseiller vous contactera sous 2h."
     });
   } catch (error) {
     console.error("Devis error:", error);
