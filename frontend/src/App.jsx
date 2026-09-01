@@ -16,10 +16,17 @@ import Toast from "./components/Toast";
 import "./styles.css";
 
 export default function App() {
+  const [language, setLanguage] = useState(() => localStorage.getItem("canal-language") || "fr");
   const [devisOpen, setDevisOpen] = useState(false);
   const [devisInitialService, setDevisInitialService] = useState("");
   const [toast, setToast] = useState(null);
   const [activeSection, setActiveSection] = useState("home");
+
+  useEffect(() => {
+    localStorage.setItem("canal-language", language);
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+  }, [language]);
 
   const showToast = (type, message) => {
     setToast({ type, message });
@@ -74,6 +81,8 @@ export default function App() {
         onOpenDevis={() => handleOpenDevis()} 
         activeSection={activeSection}
         scrollTo={scrollTo}
+        language={language}
+        setLanguage={setLanguage}
       />
 
       <main>

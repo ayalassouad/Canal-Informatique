@@ -340,6 +340,53 @@ img {
   gap: 16px;
 }
 
+.language-switcher {
+  position: relative;
+}
+
+.language-trigger,
+.language-menu button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.language-trigger {
+  padding: 9px 10px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
+.language-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 20;
+  min-width: 92px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.language-menu button {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.language-menu button:hover,
+.language-menu button.selected {
+  color: var(--primary);
+  background: var(--bg-light);
+}
+
 .menu-toggle {
   display: none;
   padding: 8px;
