@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { PRODUCT_CATEGORIES, PRODUCTS } from "../data/mockData";
 import { ArrowRight, Search, CheckCircle } from "lucide-react";
+import { localizedData, t } from "../data/i18n";
 
-export default function Products({ onOpenDevis }) {
+export default function Products({ language, onOpenDevis }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const { PRODUCT_CATEGORIES, PRODUCTS } = localizedData(language);
 
   const filteredProducts = PRODUCTS.filter((product) => {
     const matchesCategory = activeCategory === "all" || product.category === activeCategory;
@@ -16,10 +18,10 @@ export default function Products({ onOpenDevis }) {
   return (
     <section id="products" className="section-padding bg-light" style={{ borderTop: "1px solid var(--border-light)" }}>
       <div className="section-header-center">
-        <span className="section-kicker">EQUIPEMENT & MATÉRIEL PRO</span>
-        <h2 className="section-title">Catalogue de Matériel Informatique</h2>
+        <span className="section-kicker">{t(language, "EQUIPEMENT & MATÉRIEL PRO")}</span>
+        <h2 className="section-title">{t(language, "Catalogue de Matériel Informatique")}</h2>
         <p className="section-desc">
-          Une sélection rigoureuse d'équipements récents et fiables pour doter votre entreprise du meilleur matériel.
+          {t(language, "Une sélection rigoureuse d'équipements récents et fiables pour doter votre entreprise du meilleur matériel.")}
         </p>
         <div className="underline-center"></div>
       </div>
@@ -29,7 +31,7 @@ export default function Products({ onOpenDevis }) {
         <input 
           type="text"
           className="form-input"
-          placeholder="Rechercher un matériel (ex: i7, Serveur, Écran, Switch...)"
+          placeholder={t(language, "Rechercher un matériel (ex: i7, Serveur, Écran, Switch...)")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{ paddingLeft: "42px" }}
@@ -52,7 +54,7 @@ export default function Products({ onOpenDevis }) {
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>
-          <p>Aucun produit ne correspond à votre recherche "{searchQuery}".</p>
+          <p>{t(language, "Aucun produit ne correspond à votre recherche")} "{searchQuery}".</p>
         </div>
       ) : (
         <div className="products-grid">
@@ -71,12 +73,12 @@ export default function Products({ onOpenDevis }) {
                 <p className="product-specs">{prod.specs}</p>
 
                 <div className="product-footer">
-                  <span className="product-price-tag">Garantie & SAV inclus</span>
+                  <span className="product-price-tag">{t(language, "Garantie & SAV inclus")}</span>
                   <button 
                     className="btn btn-outline btn-sm"
                     onClick={() => onOpenDevis(`Matériel: ${prod.title}`)}
                   >
-                    Devis <ArrowRight size={14} />
+                    {t(language, "Devis")} <ArrowRight size={14} />
                   </button>
                 </div>
               </article>

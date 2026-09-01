@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { SERVICES } from "../data/mockData";
 import { Check, ArrowRight, X } from "lucide-react";
+import { localizedData, t } from "../data/i18n";
 
-export default function Services({ onOpenDevis }) {
+export default function Services({ language, onOpenDevis }) {
   const [selectedService, setSelectedService] = useState(null);
+  const { SERVICES } = localizedData(language);
 
   return (
     <section id="services" className="section-padding bg-light">
       <div className="section-header-center">
-        <span className="section-kicker">NOS SERVICES SUR-MESURE</span>
-        <h2 className="section-title">Des Solutions Informatiques Clé en Main</h2>
+        <span className="section-kicker">{t(language, "NOS SERVICES SUR-MESURE")}</span>
+        <h2 className="section-title">{t(language, "Des Solutions Informatiques Clé en Main")}</h2>
         <p className="section-desc">
-          Une gamme complète de prestations pour installer, sécuriser et maintenir la totalité de votre parc informatique.
+          {t(language, "Une gamme complète de prestations pour installer, sécuriser et maintenir la totalité de votre parc informatique.")}
         </p>
         <div className="underline-center"></div>
       </div>
@@ -38,7 +40,7 @@ export default function Services({ onOpenDevis }) {
               </ul>
 
               <button className="service-card-action" onClick={() => setSelectedService(service)}>
-                Découvrir la prestation <ArrowRight size={16} />
+                {t(language, "Découvrir la prestation")} <ArrowRight size={16} />
               </button>
             </article>
           );
@@ -66,7 +68,7 @@ export default function Services({ onOpenDevis }) {
               </p>
 
               <h4 style={{ fontSize: "1.05rem", marginBottom: "12px", color: "var(--text-main)" }}>
-                Engagements & Inclus dans cette prestation :
+                {t(language, "Engagements & Inclus dans cette prestation :")}
               </h4>
               <ul className="service-features-mini" style={{ border: "none", padding: 0 }}>
                 {selectedService.features.map((feat, idx) => (
@@ -78,7 +80,7 @@ export default function Services({ onOpenDevis }) {
 
               <div className="modal-footer">
                 <button className="btn btn-outline" onClick={() => setSelectedService(null)}>
-                  Fermer
+                  {t(language, "Fermer")}
                 </button>
                 <button 
                   className="btn btn-primary" 
@@ -87,7 +89,7 @@ export default function Services({ onOpenDevis }) {
                     onOpenDevis(selectedService.title);
                   }}
                 >
-                  Demander un devis pour ce service <ArrowRight size={16} />
+                  {t(language, "Demander un devis pour ce service")} <ArrowRight size={16} />
                 </button>
               </div>
             </div>

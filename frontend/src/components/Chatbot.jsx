@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MessageSquareText, SendHorizonal, X, Bot, User } from "lucide-react";
+import { t } from "../data/i18n";
 
 const API_URL = window.location.hostname === "localhost"
   ? "http://localhost:5000"
@@ -19,7 +20,8 @@ const defaultMessages = [
   }
 ];
 
-export default function Chatbot() {
+export default function Chatbot({ language }) {
+  const quickActions = language === "en" ? ["Quote", "Maintenance", "Wi-Fi Network", "Contact"] : language === "ar" ? ["عرض سعر", "الصيانة", "شبكة Wi-Fi", "اتصل بنا"] : ["Devis", "Maintenance", "Réseau Wi-Fi", "Contact"];
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState(defaultMessages);
   const [input, setInput] = useState("");
@@ -37,7 +39,7 @@ export default function Chatbot() {
       const response = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed })
+        body: JSON.stringify({ message: trimmed, language })
       });
 
       const data = await response.json();
@@ -66,14 +68,14 @@ export default function Chatbot() {
         type="button"
         className="chatbot-fab"
         onClick={() => setIsOpen((open) => !open)}
-        aria-label="Ouvrir le chatbot"
-        title="Assistant Canal Informatique"
+        aria-label={language === "ar" ? "فتح المساعد" : language === "en" ? "Open chatbot" : "Ouvrir le chatbot"}
+        title={language === "ar" ? "مساعد كانال للمعلوماتية" : language === "en" ? "Canal Informatique assistant" : "Assistant Canal Informatique"}
       >
         {isOpen ? <X size={24} /> : <MessageSquareText size={26} />}
       </button>
 
       {isOpen && (
-        <div className="chatbot-panel" role="dialog" aria-label="Chatbot Canal Informatique">
+        <div className="chatbot-panel" role="dialog" aria-label="Canal Informatique chatbot">
           <div className="chatbot-header">
             <div className="chatbot-title-wrap">
               <div className="chatbot-avatar">
@@ -81,10 +83,10 @@ export default function Chatbot() {
               </div>
               <div>
                 <strong>Assistant CI</strong>
-                <small>En ligne</small>
+                <small>{language === "ar" ? "متصل" : language === "en" ? "Online" : "En ligne"}</small>
               </div>
             </div>
-            <button type="button" className="chatbot-close" onClick={() => setIsOpen(false)} aria-label="Fermer le chatbot">
+            <button type="button" className="chatbot-close" onClick={() => setIsOpen(false)} aria-label={language === "ar" ? "إغلاق المساعد" : language === "en" ? "Close chatbot" : "Fermer le chatbot"}>
               <X size={18} />
             </button>
           </div>
@@ -104,7 +106,7 @@ export default function Chatbot() {
                 <span className="chatbot-icon">
                   <Bot size={14} />
                 </span>
-                <p>Je réfléchis à votre demande…</p>
+                <p>{language === "ar" ? "أفكر في طلبكم..." : language === "en" ? "I am thinking about your request..." : "Je réfléchis à votre demande…"}</p>
               </div>
             )}
 
@@ -122,7 +124,7 @@ export default function Chatbot() {
               type="text"
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Écrivez votre message..."
+              placeholder={language === "ar" ? "اكتبوا رسالتكم..." : language === "en" ? "Write your message..." : "Écrivez votre message..."}
               aria-label="Message du chatbot"
             />
             <button type="submit" disabled={loading || !input.trim()} aria-label="Envoyer le message">

@@ -13,6 +13,7 @@ import DevisModal from "./components/DevisModal";
 import WhatsAppFab from "./components/WhatsAppFab";
 import Chatbot from "./components/Chatbot";
 import Toast from "./components/Toast";
+import { t } from "./data/i18n";
 import "./styles.css";
 
 export default function App() {
@@ -86,27 +87,28 @@ export default function App() {
       />
 
       <main>
-        <Hero scrollTo={scrollTo} onOpenDevis={() => handleOpenDevis()} />
-        <Services onOpenDevis={handleOpenDevis} />
-        <Stats />
-        <Products onOpenDevis={handleOpenDevis} />
-        <About scrollTo={scrollTo} onOpenDevis={() => handleOpenDevis()} />
-        <Testimonials />
-        <FAQ />
-        <Contact showToast={showToast} />
+        <Hero language={language} scrollTo={scrollTo} onOpenDevis={() => handleOpenDevis()} />
+        <Services language={language} onOpenDevis={handleOpenDevis} />
+        <Stats language={language} />
+        <Products language={language} onOpenDevis={handleOpenDevis} />
+        <About language={language} scrollTo={scrollTo} onOpenDevis={() => handleOpenDevis()} />
+        <Testimonials language={language} />
+        <FAQ language={language} />
+        <Contact language={language} showToast={showToast} />
       </main>
 
-      <Footer scrollTo={scrollTo} onOpenDevis={() => handleOpenDevis()} />
+      <Footer language={language} scrollTo={scrollTo} onOpenDevis={() => handleOpenDevis()} />
 
       <DevisModal
         isOpen={devisOpen}
         onClose={() => setDevisOpen(false)}
         initialService={devisInitialService}
+        language={language}
         showToast={showToast}
       />
 
-      <WhatsAppFab />
-      <Chatbot />
+      <WhatsAppFab language={language} />
+      <Chatbot language={language} />
       <Toast toast={toast} onClose={() => setToast(null)} />
     </>
   );

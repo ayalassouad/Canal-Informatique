@@ -1,7 +1,8 @@
 import { ArrowRight, CheckCircle2, ShieldCheck, Zap, Server, Headphones, MessageCircle, FileText } from "lucide-react";
 import { COMPANY_INFO } from "../data/mockData";
+import { t } from "../data/i18n";
 
-export default function Hero({ scrollTo, onOpenDevis }) {
+export default function Hero({ language, scrollTo, onOpenDevis }) {
   return (
     <section id="home" className="hero-section">
       <div className="hero-glow-orb"></div>
@@ -10,7 +11,7 @@ export default function Hero({ scrollTo, onOpenDevis }) {
         <div className="hero-content">
           <div className="hero-badge-pill">
             <span className="pulse-dot"></span>
-            <span>EXPERT IT AU MAROC DEPUIS {COMPANY_INFO.creationYear}</span>
+            <span>{t(language, "EXPERT IT AU MAROC DEPUIS")} {COMPANY_INFO.creationYear}</span>
           </div>
 
           <h1 className="hero-title">
@@ -18,19 +19,19 @@ export default function Hero({ scrollTo, onOpenDevis }) {
           </h1>
 
           <h2 className="hero-subtitle">
-            Solutions IT & Maintenance <em>sur-mesure</em> pour votre entreprise
+            {t(language, "Solutions IT & Maintenance")} <em>{t(language, "sur-mesure")}</em>
           </h2>
 
           <p className="hero-description">
-            Vente de matériel informatique professionnel, installation réseau, maintenance préventive et support réactif. Nous sécurisons et optimisons vos systèmes pour une productivité sans interruption.
+            {language === "fr" ? "Vente de matériel informatique professionnel, installation réseau, maintenance préventive et support réactif. Nous sécurisons et optimisons vos systèmes pour une productivité sans interruption." : language === "ar" ? "بيع المعدات المعلوماتية الاحترافية وتركيب الشبكات والصيانة الوقائية والدعم السريع. نؤمن أنظمتكم ونحسنها لضمان إنتاجية متواصلة." : "Professional IT hardware sales, network installation, preventive maintenance and responsive support. We secure and optimize your systems for uninterrupted productivity."}
           </p>
 
           <div className="hero-cta-group">
             <button className="btn btn-primary" onClick={onOpenDevis}>
-              Simuler un devis <FileText size={18} />
+              {t(language, "Simuler un devis")} <FileText size={18} />
             </button>
             <button className="btn btn-secondary" onClick={() => scrollTo("services")}>
-              Nos services <ArrowRight size={18} />
+              {t(language, "Nos services")} <ArrowRight size={18} />
             </button>
             <a 
               className="btn btn-secondary" 
@@ -76,26 +77,26 @@ export default function Hero({ scrollTo, onOpenDevis }) {
             <div className="tech-showcase-grid">
               <div className="tech-tile">
                 <Server className="tech-tile-icon" size={28} />
-                <h4>Serveurs & Cloud</h4>
-                <p>Virtualisation, stockage sécurisé NAS & sauvegardes automatiques.</p>
+                <h4>{t(language, "Serveurs & Cloud")}</h4>
+                <p>{language === "fr" ? "Virtualisation, stockage sécurisé NAS & sauvegardes automatiques." : language === "ar" ? "افتراضية وتخزين NAS آمن ونسخ احتياطية تلقائية." : "Virtualization, secure NAS storage & automatic backups."}</p>
               </div>
 
               <div className="tech-tile">
                 <Zap className="tech-tile-icon" size={28} />
-                <h4>Réseaux Wi-Fi & Câblage</h4>
-                <p>Switchs administrables, Wi-Fi maillé & pare-feu sécurisé.</p>
+                <h4>{t(language, "Réseaux Wi-Fi & Câblage")}</h4>
+                <p>{language === "fr" ? "Switchs administrables, Wi-Fi maillé & pare-feu sécurisé." : language === "ar" ? "محولات مُدارة وWi-Fi متداخل وجدار حماية آمن." : "Managed switches, mesh Wi-Fi & secure firewall."}</p>
               </div>
 
               <div className="tech-tile">
                 <ShieldCheck className="tech-tile-icon" size={28} />
-                <h4>Contrats de Maintenance</h4>
-                <p>Diagnostic préventif, nettoyage et assistance continue.</p>
+                <h4>{t(language, "Contrats de Maintenance")}</h4>
+                <p>{language === "fr" ? "Diagnostic préventif, nettoyage et assistance continue." : language === "ar" ? "تشخيص وقائي وتنظيف ومساعدة مستمرة." : "Preventive diagnostics, cleanup and ongoing support."}</p>
               </div>
 
               <div className="tech-tile">
                 <Headphones className="tech-tile-icon" size={28} />
-                <h4>Support Hotline Réactif</h4>
-                <p>Prise en main immédiate à distance et assistance sur site.</p>
+                <h4>{t(language, "Support Hotline Réactif")}</h4>
+                <p>{language === "fr" ? "Prise en main immédiate à distance et assistance sur site." : language === "ar" ? "تحكم فوري عن بعد ومساعدة في الموقع." : "Immediate remote access and on-site assistance."}</p>
               </div>
             </div>
           </div>

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { X, Check, ArrowRight, ArrowLeft, Send, FileText, CheckCircle2 } from "lucide-react";
 import { DEVIS_OPTIONS } from "../data/mockData";
+import { t } from "../data/i18n";
 
 const API_URL = window.location.hostname === "localhost"
   ? "http://localhost:5000"
   : "https://canal-informatique-backend.onrender.com";
 
-export default function DevisModal({ isOpen, onClose, initialService, showToast }) {
+export default function DevisModal({ isOpen, onClose, initialService, language, showToast }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -62,7 +63,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>
-            <FileText size={22} className="text-cyan" /> Simulateur de Devis Informatique
+            <FileText size={22} className="text-cyan" /> {t(language, "Simulateur de Devis Informatique")}
           </h3>
           <button className="close-btn" onClick={onClose} aria-label="Fermer">
             <X size={24} />
@@ -79,12 +80,12 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
 
           <div style={{ marginBottom: "20px" }}>
             <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--cyan-glow)", textTransform: "uppercase", letterSpacing: "1px" }}>
-              Étape {step} sur 3
+              {t(language, "Étape")} {step} {t(language, "sur")} 3
             </span>
             <h4 style={{ fontSize: "1.2rem", marginTop: "4px" }}>
-              {step === 1 && "1. Quel est votre besoin principal ?"}
-              {step === 2 && "2. Quelle est la taille de votre structure ?"}
-              {step === 3 && "3. Vos coordonnées pour recevoir l'estimation"}
+              {step === 1 && (language === "fr" ? "1. Quel est votre besoin principal ?" : language === "ar" ? "1. ما هي حاجتكم الرئيسية؟" : "1. What is your main need?")}
+              {step === 2 && (language === "fr" ? "2. Quelle est la taille de votre structure ?" : language === "ar" ? "2. ما حجم مؤسستكم؟" : "2. What is the size of your organization?")}
+              {step === 3 && (language === "fr" ? "3. Vos coordonnées pour recevoir l'estimation" : language === "ar" ? "3. بياناتكم لتلقي التقدير" : "3. Your details to receive the estimate")}
             </h4>
           </div>
 
@@ -108,7 +109,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
           {step === 2 && (
             <div>
               <label className="form-group" style={{ marginBottom: "14px", display: "block" }}>
-                <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--text-main)" }}>Nombre de postes informatiques :</span>
+                <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--text-main)" }}>{t(language, "Nombre de postes informatiques :")}</span>
               </label>
               <div className="devis-options-grid" style={{ marginBottom: "20px" }}>
                 {DEVIS_OPTIONS.sizeOptions.map((so) => (
@@ -126,7 +127,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
               </div>
 
               <label className="form-group" style={{ marginBottom: "14px", display: "block" }}>
-                <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--text-main)" }}>Délai souhaité :</span>
+                <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--text-main)" }}>{t(language, "Délai souhaité :")}</span>
               </label>
               <div className="devis-options-grid">
                 {DEVIS_OPTIONS.urgencies.map((urg) => (
@@ -149,7 +150,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
             <form id="devis-form" onSubmit={handleSubmit}>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Nom complet *</label>
+                  <label>{t(language, "Nom complet *")}</label>
                   <input
                     required
                     type="text"
@@ -160,7 +161,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
                   />
                 </div>
                 <div className="form-group">
-                  <label>Nom de l'entreprise</label>
+                  <label>{t(language, "Nom de l'entreprise")}</label>
                   <input
                     type="text"
                     className="form-input"
@@ -173,7 +174,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
 
               <div className="form-row">
                 <div className="form-group">
-                  <label>Adresse email professionnelle *</label>
+                  <label>{t(language, "Adresse email professionnelle *")}</label>
                   <input
                     required
                     type="email"
@@ -184,7 +185,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
                   />
                 </div>
                 <div className="form-group">
-                  <label>Numéro de téléphone *</label>
+                  <label>{t(language, "Numéro de téléphone")} *</label>
                   <input
                     required
                     type="tel"
@@ -197,7 +198,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
               </div>
 
               <div className="form-group">
-                <label>Précisions sur votre projet (Optionnel)</label>
+                <label>{t(language, "Précisions sur votre projet (Optionnel)")}</label>
                 <textarea
                   className="form-textarea"
                   rows="3"
@@ -212,7 +213,7 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
           <div className="modal-footer">
             {step > 1 ? (
               <button type="button" className="btn btn-outline" onClick={handlePrev}>
-                <ArrowLeft size={16} /> Précédent
+                <ArrowLeft size={16} /> {t(language, "Précédent")}
               </button>
             ) : (
               <div></div>
@@ -220,11 +221,11 @@ export default function DevisModal({ isOpen, onClose, initialService, showToast 
 
             {step < 3 ? (
               <button type="button" className="btn btn-primary" onClick={handleNext}>
-                Suivant <ArrowRight size={16} />
+                {t(language, "Suivant")} <ArrowRight size={16} />
               </button>
             ) : (
               <button type="submit" form="devis-form" className="btn btn-primary" disabled={loading}>
-                {loading ? "Transmission..." : <>Envoyer ma demande de devis <Send size={16} /></>}
+                {loading ? t(language, "Transmission...") : <>{t(language, "Envoyer ma demande de devis")} <Send size={16} /></>}
               </button>
             )}
           </div>

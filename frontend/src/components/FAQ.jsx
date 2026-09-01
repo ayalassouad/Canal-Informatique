@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { FAQS } from "../data/mockData";
 import { ChevronDown, HelpCircle } from "lucide-react";
+import { t } from "../data/i18n";
 
-export default function FAQ() {
+export default function FAQ({ language }) {
   const [openIndex, setOpenIndex] = useState(0);
 
   const toggleIndex = (idx) => {
@@ -12,10 +13,10 @@ export default function FAQ() {
   return (
     <section id="faq" className="section-padding bg-light">
       <div className="section-header-center">
-        <span className="section-kicker">DES RÉPONSES À VOS QUESTIONS</span>
-        <h2 className="section-title">Foire Aux Questions (FAQ)</h2>
+        <span className="section-kicker">{t(language, "DES RÉPONSES À VOS QUESTIONS")}</span>
+        <h2 className="section-title">{t(language, "Foire Aux Questions (FAQ)")}</h2>
         <p className="section-desc">
-          Retrouvez les réponses aux interrogations les plus fréquentes concernant nos contrats, garanties et interventions.
+          {t(language, "Retrouvez les réponses aux interrogations les plus fréquentes concernant nos contrats, garanties et interventions.")}
         </p>
         <div className="underline-center"></div>
       </div>

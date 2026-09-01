@@ -1,6 +1,7 @@
-import { STATS } from "../data/mockData";
+import { localizedData } from "../data/i18n";
 
-export default function Stats() {
+export default function Stats({ language }) {
+  const { STATS } = localizedData(language);
   return (
     <section className="stats-section">
       <div className="stats-grid">

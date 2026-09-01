@@ -1,7 +1,8 @@
 import { COMPANY_INFO } from "../data/mockData";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { t } from "../data/i18n";
 
-export default function Footer({ scrollTo, onOpenDevis }) {
+export default function Footer({ language, scrollTo, onOpenDevis }) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -15,30 +16,30 @@ export default function Footer({ scrollTo, onOpenDevis }) {
         </div>
 
         <div className="footer-col">
-          <h4>Navigation</h4>
+          <h4>{t(language, "Navigation")}</h4>
           <ul className="footer-links">
             <li><button onClick={() => scrollTo("home")}>Accueil</button></li>
-            <li><button onClick={() => scrollTo("services")}>Nos Services</button></li>
-            <li><button onClick={() => scrollTo("products")}>Catalogue Produits</button></li>
-            <li><button onClick={() => scrollTo("about")}>À propos de nous</button></li>
+            <li><button onClick={() => scrollTo("services")}>{t(language, "Nos Services")}</button></li>
+            <li><button onClick={() => scrollTo("products")}>{t(language, "Catalogue Produits")}</button></li>
+            <li><button onClick={() => scrollTo("about")}>{t(language, "À propos de nous")}</button></li>
             <li><button onClick={() => scrollTo("faq")}>FAQ</button></li>
             <li><button onClick={() => scrollTo("contact")}>Contact</button></li>
           </ul>
         </div>
 
         <div className="footer-col">
-          <h4>Services Pro</h4>
+          <h4>{t(language, "Services Pro")}</h4>
           <ul className="footer-links">
-            <li><button onClick={() => scrollTo("services")}>Vente de Matériel</button></li>
-            <li><button onClick={() => scrollTo("services")}>Contrat de Maintenance</button></li>
-            <li><button onClick={() => scrollTo("services")}>Installation & Réseaux</button></li>
-            <li><button onClick={() => scrollTo("services")}>Assistance Hotline 24/7</button></li>
-            <li><button onClick={onOpenDevis}>Simulateur de Devis</button></li>
+            <li><button onClick={() => scrollTo("services")}>{t(language, "Vente de Matériel")}</button></li>
+            <li><button onClick={() => scrollTo("services")}>{t(language, "Contrat de Maintenance")}</button></li>
+            <li><button onClick={() => scrollTo("services")}>{t(language, "Installation & Réseaux")}</button></li>
+            <li><button onClick={() => scrollTo("services")}>{t(language, "Assistance Hotline 24/7")}</button></li>
+            <li><button onClick={onOpenDevis}>{t(language, "Simulateur de Devis")}</button></li>
           </ul>
         </div>
 
         <div className="footer-col">
-          <h4>Contact & Accès</h4>
+          <h4>{t(language, "Contact & Accès")}</h4>
           <ul className="footer-links">
             <li style={{ color: "#94a3b8", display: "flex", gap: "8px", alignItems: "center" }}>
               <Phone size={14} style={{ color: "var(--cyan-glow)" }} /> {COMPANY_INFO.phoneFormatted}
@@ -54,7 +55,7 @@ export default function Footer({ scrollTo, onOpenDevis }) {
       </div>
 
       <div className="footer-bottom">
-        <p>© {currentYear} Canal Informatique. Tous droits réservés.</p>
+        <p>© {currentYear} Canal Informatique. {t(language, "Tous droits réservés.")}</p>
         <p>Conception & Infrastructure Web — Canal Informatique Maroc | <a href="http://localhost:8501" target="_blank" rel="noreferrer" style={{ color: "var(--cyan-glow)", textDecoration: "none" }}>Admin Dashboard</a></p>
       </div>
     </footer>

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Phone, Mail, MapPin, MessageCircle, Send, Clock, CheckCircle2 } from "lucide-react";
 import { COMPANY_INFO } from "../data/mockData";
+import { t } from "../data/i18n";
 
 const API_URL = window.location.hostname === "localhost"
   ? "http://localhost:5000"
   : "https://canal-informatique-backend.onrender.com";
 
-export default function Contact({ showToast }) {
+export default function Contact({ language, showToast }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [loading, setLoading] = useState(false);
 
@@ -37,10 +38,10 @@ export default function Contact({ showToast }) {
     <section id="contact" className="section-padding" style={{ backgroundColor: "#ffffff" }}>
       <div className="contact-grid">
         <div className="contact-info-card">
-          <span className="section-kicker" style={{ color: "var(--cyan-glow)" }}>PRENDRE CONTACT</span>
-          <h3>Discutons de Votre Projet IT</h3>
+          <span className="section-kicker" style={{ color: "var(--cyan-glow)" }}>{t(language, "PRENDRE CONTACT")}</span>
+          <h3>{t(language, "Discutons de Votre Projet IT")}</h3>
           <p>
-            Vous souhaitez renouveler vos ordinateurs, installer un réseau haut débit ou sécuriser la maintenance de votre entreprise ? Contactez nos spécialistes.
+            {language === "fr" ? "Vous souhaitez renouveler vos ordinateurs, installer un réseau haut débit ou sécuriser la maintenance de votre entreprise ? Contactez nos spécialistes." : language === "ar" ? "هل ترغبون في تجديد أجهزة الكمبيوتر أو تركيب شبكة عالية السرعة أو تأمين صيانة شركتكم؟ تواصلوا مع خبرائنا." : "Would you like to renew your computers, install a high-speed network or secure your business maintenance? Contact our specialists."}
           </p>
 
           <div className="contact-detail-item">
@@ -48,7 +49,7 @@ export default function Contact({ showToast }) {
               <Phone size={22} />
             </div>
             <div className="contact-detail-text">
-              <small>Téléphone Direct</small>
+              <small>{t(language, "Téléphone Direct")}</small>
               <a href={`tel:${COMPANY_INFO.phone}`}>{COMPANY_INFO.phoneFormatted}</a>
             </div>
           </div>
@@ -58,7 +59,7 @@ export default function Contact({ showToast }) {
               <Mail size={22} />
             </div>
             <div className="contact-detail-text">
-              <small>Adresse Email</small>
+              <small>{t(language, "Adresse Email")}</small>
               <a href={`mailto:${COMPANY_INFO.email}`}>{COMPANY_INFO.email}</a>
             </div>
           </div>
@@ -68,7 +69,7 @@ export default function Contact({ showToast }) {
               <MapPin size={22} />
             </div>
             <div className="contact-detail-text">
-              <small>Zone d'Intervention</small>
+              <small>{t(language, "Zone d'Intervention")}</small>
               <b>{COMPANY_INFO.address}</b>
             </div>
           </div>
@@ -78,7 +79,7 @@ export default function Contact({ showToast }) {
               <Clock size={22} />
             </div>
             <div className="contact-detail-text">
-              <small>Horaires d'Ouverture</small>
+              <small>{t(language, "Horaires d'Ouverture")}</small>
               <b>{COMPANY_INFO.hours}</b>
             </div>
           </div>
@@ -90,21 +91,21 @@ export default function Contact({ showToast }) {
               target="_blank"
               rel="noreferrer"
             >
-              <MessageCircle size={20} /> Écrire sur WhatsApp
+              <MessageCircle size={20} /> {t(language, "Écrire sur WhatsApp")}
             </a>
           </div>
         </div>
 
         <div className="contact-form-card">
-          <h3>Envoyez-nous un Message</h3>
+          <h3>{t(language, "Envoyez-nous un Message")}</h3>
           <p style={{ color: "var(--text-muted)", marginBottom: "24px" }}>
-            Remplissez ce formulaire et recevez une réponse sous 24 heures maximum.
+            {t(language, "Remplissez ce formulaire et recevez une réponse sous 24 heures maximum.")}
           </p>
 
           <form onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label>Nom complet *</label>
+                <label>{t(language, "Nom complet *")}</label>
                 <input
                   required
                   type="text"
@@ -115,7 +116,7 @@ export default function Contact({ showToast }) {
                 />
               </div>
               <div className="form-group">
-                <label>Adresse Email *</label>
+                <label>{t(language, "Adresse Email *")}</label>
                 <input
                   required
                   type="email"
@@ -129,7 +130,7 @@ export default function Contact({ showToast }) {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Numéro de téléphone</label>
+                <label>{t(language, "Numéro de téléphone")}</label>
                 <input
                   type="tel"
                   className="form-input"
@@ -139,7 +140,7 @@ export default function Contact({ showToast }) {
                 />
               </div>
               <div className="form-group">
-                <label>Sujet de votre demande *</label>
+                <label>{t(language, "Sujet de votre demande *")}</label>
                 <input
                   required
                   type="text"
@@ -152,7 +153,7 @@ export default function Contact({ showToast }) {
             </div>
 
             <div className="form-group">
-              <label>Message ou détails du besoin *</label>
+              <label>{t(language, "Message ou détails du besoin *")}</label>
               <textarea
                 required
                 className="form-textarea"
@@ -164,7 +165,7 @@ export default function Contact({ showToast }) {
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ width: "100%" }} disabled={loading}>
-              {loading ? "Envoi en cours..." : <>Envoyer mon message <Send size={18} /></>}
+              {loading ? t(language, "Envoi en cours...") : <>{t(language, "Envoyer mon message")} <Send size={18} /></>}
             </button>
           </form>
         </div>

@@ -1,14 +1,15 @@
 import { TESTIMONIALS } from "../data/mockData";
 import { Star } from "lucide-react";
+import { t } from "../data/i18n";
 
-export default function Testimonials() {
+export default function Testimonials({ language }) {
   return (
     <section className="section-padding" style={{ backgroundColor: "#ffffff" }}>
       <div className="section-header-center">
-        <span className="section-kicker">CONFIANCE & RETOURS CLIENTS</span>
-        <h2 className="section-title">Ce que nos clients disent de nous</h2>
+        <span className="section-kicker">{t(language, "CONFIANCE & RETOURS CLIENTS")}</span>
+        <h2 className="section-title">{t(language, "Ce que nos clients disent de nous")}</h2>
         <p className="section-desc">
-          Découvrez les témoignages des entreprises et professionnels qui nous font confiance pour la gestion de leur infrastructure.
+          {t(language, "Découvrez les témoignages des entreprises et professionnels qui nous font confiance pour la gestion de leur infrastructure.")}
         </p>
         <div className="underline-center"></div>
       </div>
