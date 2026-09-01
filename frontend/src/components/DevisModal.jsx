@@ -2,7 +2,7 @@ import { useState } from "react";
 import { X, Check, ArrowRight, ArrowLeft, Send, FileText, CheckCircle2 } from "lucide-react";
 import { DEVIS_OPTIONS } from "../data/mockData";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://canal-informatique-backend.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL !== undefined ? import.meta.env.VITE_API_URL : "https://canal-informatique.onrender.com";
 
 export default function DevisModal({ isOpen, onClose, initialService, showToast }) {
   const [step, setStep] = useState(1);

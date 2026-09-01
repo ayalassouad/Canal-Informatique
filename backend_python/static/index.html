@@ -1,508 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canal Informatique - Expert IT &amp; Maintenance Maroc</title>
-  <meta name="description" content="Vente materiel informatique professionnel, installation reseau, maintenance preventive a Casablanca et Rabat.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,13,26,.85);backdrop-filter:blur(8px);z-index:1000;place-items:center;padding:12px;overflow-y:auto}
-    .modal-overlay.open{display:grid}
-    .modal-container{max-height:85vh;display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden;width:100%;max-width:650px}
-    .modal-header{flex-shrink:0;background:#040d1a;color:#fff;padding:20px 30px;display:flex;align-items:center;justify-content:space-between}
-    .modal-body{overflow-y:auto;flex:1;padding:24px 30px}
-    .modal-footer{flex-shrink:0;background:#fff;padding:16px 30px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;gap:12px}
-    @media (max-width: 768px) {
-      .modal-overlay{padding:0;align-items:flex-end}
-      .modal-container{max-height:85vh;width:100%;border-radius:16px 16px 0 0}
-      .modal-header{padding:16px 20px}
-      .modal-body{padding:16px 20px 20px}
-      .modal-footer{padding:12px 16px 16px}
-      .devis-tile{padding:10px 12px;font-size:0.875rem}
-      .devis-options-grid{gap:8px;margin-bottom:14px}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#061325" />
+    <meta name="description" content="Canal Informatique — Expert en vente de matériel, maintenance, réseaux et installation informatique pour entreprises et particuliers au Maroc depuis 1992." />
+    <meta name="keywords" content="maintenance informatique, vente ordinateur maroc, installation reseau, canal informatique casablanca rabat, serveur entreprise, support technique" />
+    <meta name="author" content="Canal Informatique" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://canal-informatique.ma/" />
+    <meta property="og:title" content="Canal Informatique | Solutions & Service Informatique au Maroc" />
+    <meta property="og:description" content="Vente de matériel, installation, maintenance et réseaux informatiques depuis 1992. Intervention rapide et solutions sur mesure." />
+    <meta property="og:image" content="/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="Canal Informatique | Solutions Informatiques" />
+    <meta property="twitter:description" content="Expertise informatique, vente de matériel et maintenance pour entreprises au Maroc depuis 1992." />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f4cba'/><text x='50%' y='65%' font-size='50' font-weight='900' fill='white' text-anchor='middle' font-family='sans-serif'>CI</text></svg>" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ITStore",
+      "name": "Canal Informatique",
+      "description": "Vente de matériel, installation, réseaux et maintenance informatique depuis 1992.",
+      "foundingDate": "1992",
+      "telephone": "+212620155466",
+      "email": "contact@canal-informatique.ma",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Casablanca",
+        "addressRegion": "Rabat-Salé-Kénitra",
+        "addressCountry": "MA"
+      },
+      "priceRange": "$$",
+      "openingHours": "Mo-Fr 08:30-19:00, Sa 09:00-13:00"
     }
-    .devis-step{display:none}.devis-step.active{display:block}
-    #toast-container{position:fixed;top:100px;right:30px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
-    #chat-fab{position:fixed;bottom:30px;right:30px;width:60px;height:60px;background:linear-gradient(135deg,#2563eb,#0284c7);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.6rem;box-shadow:0 4px 14px rgba(37,99,235,.5);cursor:pointer;z-index:500;transition:.3s;border:none}
-    #chat-fab:hover{transform:scale(1.1)}
-    #whatsapp-fab{position:fixed;bottom:100px;right:30px;background:#10b981;color:#fff;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;box-shadow:0 10px 25px rgba(16,185,129,.4);z-index:500;transition:.3s;font-size:1.6rem;text-decoration:none}
-    #whatsapp-fab:hover{transform:scale(1.1)}
-    #chat-window{position:fixed;bottom:100px;right:30px;width:350px;height:450px;background:white;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.25);z-index:600;flex-direction:column;overflow:hidden;display:none}
-    #chat-window.open{display:flex}
-    .chat-header{background:#040d1a;color:white;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
-    .chat-header button{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:1.5rem;line-height:1}
-    .chat-header button:hover{color:white}
-    #chat-messages{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:#f6f9fc}
-    .chat-msg{max-width:82%;padding:10px 14px;border-radius:12px;font-size:.9rem;line-height:1.5}
-    .chat-user{background:#2563eb;color:white;align-self:flex-end;border-bottom-right-radius:3px}
-    .chat-bot{background:#e2e8f0;color:#0f172a;align-self:flex-start;border-bottom-left-radius:3px}
-    #chat-form{display:flex;padding:10px;border-top:1px solid #e2e8f0;background:white;gap:8px}
-    #chat-input{flex:1;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:20px;outline:none;font-size:.9rem;font-family:inherit}
-    #chat-input:focus{border-color:#2563eb}
-    #chat-send{background:#2563eb;color:white;border:none;padding:0 18px;border-radius:20px;cursor:pointer;font-weight:600;font-size:1rem}
-    .nav-links.open{display:flex!important}
-    .faq-answer-panel{display:none;padding:0 24px 20px;color:#64748b;font-size:.95rem;line-height:1.65}
-    .faq-item.open .faq-answer-panel{display:block}
-    .faq-chevron{transition:transform .25s;display:inline-block}
-    .faq-item.open .faq-chevron{transform:rotate(180deg)}
-    .devis-tile.selected .devis-tile-radio{border-color:#2563eb;background:#2563eb}
-  </style>
-</head>
-<body>
+    </script>
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-info">
-      <span>+212 6 20 15 54 66</span>
-      <span>Casablanca &amp; Region Rabat-Sale-Kenitra, Maroc</span>
-      <span>Lun-Ven: 08:30-19:00 | Sam: 09:00-13:00</span>
-    </div>
-    <div class="topbar-right">Partenaire Informatique certifie depuis 1992</div>
-  </div>
-
-  <!-- HEADER -->
-  <header class="site-header" id="site-header">
-    <button class="logo-btn" onclick="scrollTo('home')">
-      <span class="logo-badge">CI</span>
-      <span class="logo-text"><b>CANAL</b><strong>INFORMATIQUE</strong><small>Votre partenaire informatique</small></span>
-    </button>
-    <nav class="nav-links" id="nav-links">
-      <button class="nav-link" id="nav-home" onclick="navTo('home')">Accueil</button>
-      <button class="nav-link" id="nav-services" onclick="navTo('services')">Services</button>
-      <button class="nav-link" id="nav-products" onclick="navTo('products')">Produits</button>
-      <button class="nav-link" id="nav-about" onclick="navTo('about')">A propos</button>
-      <button class="nav-link" id="nav-faq" onclick="navTo('faq')">FAQ</button>
-      <button class="nav-link" id="nav-contact" onclick="navTo('contact')">Contact</button>
-    </nav>
-    <div class="nav-actions">
-      <button class="btn btn-primary desktop-quote-btn btn-sm" id="btn-devis-header" onclick="openDevis()">Demander un devis</button>
-      <button class="menu-toggle" onclick="toggleMenu()">&#9776;</button>
-    </div>
-  </header>
-
-  <main>
-    <!-- HERO -->
-    <section id="home" class="hero-section">
-      <div class="hero-glow-orb"></div>
-      <div class="hero-grid">
-        <div class="hero-content">
-          <div class="hero-badge-pill"><span class="pulse-dot"></span><span>EXPERT IT AU MAROC DEPUIS 1992</span></div>
-          <h1 class="hero-title">CANAL <span>INFORMATIQUE</span></h1>
-          <h2 class="hero-subtitle">Solutions IT &amp; Maintenance <em>sur-mesure</em> pour votre entreprise</h2>
-          <p class="hero-description">Vente de materiel informatique professionnel, installation reseau, maintenance preventive et support reactif. Nous securisons et optimisons vos systemes pour une productivite sans interruption.</p>
-          <div class="hero-cta-group">
-            <button class="btn btn-primary" onclick="openDevis()">Simuler un devis</button>
-            <button class="btn btn-secondary" onclick="navTo('services')">Nos services &#8594;</button>
-            <a class="btn btn-secondary" href="https://wa.me/212620155466?text=Bonjour%20Canal%20Informatique" target="_blank" rel="noreferrer">&#128172; WhatsApp</a>
-          </div>
-          <div class="hero-features-list">
-            <div class="hero-feature-item"><span>&#10003;</span><span><b>30+ ans</b> d experience certifiee</span></div>
-            <div class="hero-feature-item"><span>&#10003;</span><span>Intervention sur site <b>en moins de 2h</b></span></div>
-            <div class="hero-feature-item"><span>&#10003;</span><span>Materiel garanti <b>100% constructeur</b></span></div>
-            <div class="hero-feature-item"><span>&#10003;</span><span>Support <b>telephonique &amp; telemaintenance</b></span></div>
-          </div>
-        </div>
-        <div class="hero-visual-container">
-          <div class="hero-glass-card">
-            <div class="glass-card-header">
-              <div class="dots-group"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
-              <span class="tech-tag">INFRASTRUCTURE CANAL IT</span>
-            </div>
-            <div class="tech-showcase-grid">
-              <div class="tech-tile"><h4>Serveurs &amp; Cloud</h4><p>Virtualisation, stockage securise NAS &amp; sauvegardes automatiques.</p></div>
-              <div class="tech-tile"><h4>Reseaux Wi-Fi</h4><p>Switchs administrables, Wi-Fi maille &amp; pare-feu securise.</p></div>
-              <div class="tech-tile"><h4>Contrats Maintenance</h4><p>Diagnostic preventif, nettoyage et assistance continue.</p></div>
-              <div class="tech-tile"><h4>Support Hotline</h4><p>Prise en main immediate a distance et assistance sur site.</p></div>
-            </div>
-          </div>
-          <div class="floating-badge">
-            <div class="floating-badge-icon">&#10003;</div>
-            <div><b>99.8% de Disponibilite</b><span>Partenaire IT de +1000 clients</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SERVICES -->
-    <section id="services" class="section-padding bg-light">
-      <div class="section-header-center">
-        <span class="section-kicker">NOS EXPERTISES</span>
-        <h2 class="section-title">Solutions &amp; Services IT Professionnels</h2>
-        <p class="section-desc">Des prestations informatiques completes, adaptees aux besoins de votre entreprise pour une infrastructure fiable et evolutive.</p>
-        <div class="underline-center"></div>
-      </div>
-      <div class="service-grid">
-        <div class="service-card"><span class="service-card-badge">Vente Materiel</span><div class="service-icon-wrapper">&#128187;</div><h3>Vente de materiel informatique</h3><p>Equipements informatiques professionnels selectionnes parmi les plus grandes marques mondiales.</p><ul class="service-features-mini"><li>Garantie pieces &amp; main d oeuvre</li><li>Materiel neuf &amp; reconditionne certifie</li><li>Conseil sur-mesure d equipement</li><li>Livraison &amp; pre-configuration</li></ul><button class="service-card-action" onclick="openDevis('vente')">Obtenir un devis &#8594;</button></div>
-        <div class="service-card"><span class="service-card-badge">Support Preventif</span><div class="service-icon-wrapper">&#128295;</div><h3>Maintenance &amp; Contrat Annuel</h3><p>Maintenance preventive et curative pour preserver la performance de votre parc informatique.</p><ul class="service-features-mini"><li>Contrats de maintenance sur-mesure</li><li>Interventions sur site sous 2h</li><li>Telemaintenance securisee a distance</li><li>Nettoyage &amp; optimisation materielle</li></ul><button class="service-card-action" onclick="openDevis('maintenance')">Obtenir un devis &#8594;</button></div>
-        <div class="service-card"><span class="service-card-badge">Infrastructure</span><div class="service-icon-wrapper">&#127760;</div><h3>Reseaux &amp; Securite Wi-Fi</h3><p>Conception, cablage et securisation de vos reseaux informatiques d entreprise.</p><ul class="service-features-mini"><li>Audit &amp; certification reseau</li><li>Reseaux filaires Gigabit / Fibre</li><li>Wi-Fi d entreprise securise</li><li>Pare-feu &amp; VPN acces distant</li></ul><button class="service-card-action" onclick="openDevis('reseau')">Obtenir un devis &#8594;</button></div>
-        <div class="service-card"><span class="service-card-badge">Deploiement</span><div class="service-icon-wrapper">&#9881;</div><h3>Installation &amp; Configuration</h3><p>Deploiement cle en main de vos systemes, peripheriques et logiciels professionnels.</p><ul class="service-features-mini"><li>Migration sans perte de donnees</li><li>Configuration postes &amp; serveurs</li><li>Masterisation d images systeme</li><li>Formation des utilisateurs</li></ul><button class="service-card-action" onclick="openDevis('installation')">Obtenir un devis &#8594;</button></div>
-        <div class="service-card"><span class="service-card-badge">Support 24/7</span><div class="service-icon-wrapper">&#127911;</div><h3>Assistance &amp; Helpdesk</h3><p>Un support technologique dedie et reactif pour resoudre vos pannes au quotidien.</p><ul class="service-features-mini"><li>Hotline dediee reactive</li><li>Prise en main a distance securisee</li><li>Gestion des tickets d incidents</li><li>Suivi en temps reel</li></ul><button class="service-card-action" onclick="openDevis('assistance')">Obtenir un devis &#8594;</button></div>
-        <div class="service-card"><span class="service-card-badge">Solutions PME</span><div class="service-icon-wrapper">&#127970;</div><h3>Solutions Entreprises &amp; Cloud</h3><p>Accompagnement global dans la transformation et la gestion de vos infrastructures IT.</p><ul class="service-features-mini"><li>Sauvegarde automatique locale &amp; Cloud</li><li>Virtualisation de serveurs</li><li>Audit de securite informatique</li><li>Conseil &amp; schemas directeur IT</li></ul><button class="service-card-action" onclick="openDevis('serveur')">Obtenir un devis &#8594;</button></div>
-      </div>
-    </section>
-
-    <!-- STATS -->
-    <section class="stats-section">
-      <div class="stats-grid">
-        <div class="stat-item"><div class="stat-number">30+</div><div class="stat-label">Annees d Experience</div><div class="stat-sub">Depuis 1992 au Maroc</div></div>
-        <div class="stat-item"><div class="stat-number">1000+</div><div class="stat-label">Clients Satisfaits</div><div class="stat-sub">PME, PMO &amp; Particuliers</div></div>
-        <div class="stat-item"><div class="stat-number">99.8%</div><div class="stat-label">Taux de Satisfaction</div><div class="stat-sub">Qualite de service constante</div></div>
-        <div class="stat-item"><div class="stat-number">&lt;2h</div><div class="stat-label">Temps de Reponse</div><div class="stat-sub">Intervention d urgence reactive</div></div>
-      </div>
-    </section>
-
-    <!-- PRODUCTS -->
-    <section id="products" class="section-padding bg-light" style="border-top:1px solid var(--border-light)">
-      <div class="section-header-center">
-        <span class="section-kicker">EQUIPEMENT &amp; MATERIEL PRO</span>
-        <h2 class="section-title">Catalogue de Materiel Informatique</h2>
-        <p class="section-desc">Une selection rigoureuse d equipements recents et fiables pour doter votre entreprise du meilleur materiel.</p>
-        <div class="underline-center"></div>
-      </div>
-      <div style="max-width:600px;margin:0 auto 30px;position:relative">
-        <input type="text" class="form-input" id="product-search" placeholder="Rechercher (ex: i7, Serveur, Ecran...)" oninput="filterProducts()" style="padding-left:40px">
-      </div>
-      <div class="products-filter-bar">
-        <button class="filter-btn active" onclick="setFilter('all',this)">Tous les produits</button>
-        <button class="filter-btn" onclick="setFilter('ordinateurs',this)">Ordinateurs &amp; Portables</button>
-        <button class="filter-btn" onclick="setFilter('ecrans',this)">Ecrans &amp; Peripheriques</button>
-        <button class="filter-btn" onclick="setFilter('impression',this)">Impression &amp; Consommables</button>
-        <button class="filter-btn" onclick="setFilter('serveurs',this)">Serveurs &amp; Reseaux</button>
-      </div>
-      <div class="products-grid" id="products-grid">
-        <article class="product-card" data-category="ordinateurs"><div class="product-header"><div class="product-icon-box">&#128187;</div><span class="product-badge">En Stock</span></div><h3>PC Portable Professionnel</h3><p class="product-specs">Intel Core i7 / 16 Go RAM / 512 Go SSD NVMe / Ecran 15.6" FHD</p><div class="product-footer"><span class="product-price-tag">Garantie &amp; SAV inclus</span><button class="btn btn-outline btn-sm" onclick="openDevis('vente')">Devis &#8594;</button></div></article>
-        <article class="product-card" data-category="ordinateurs"><div class="product-header"><div class="product-icon-box">&#128421;</div><span class="product-badge">Populaire</span></div><h3>Station de Travail Bureau Pro</h3><p class="product-specs">Intel Core i5 / 16 Go RAM / 1 TB SSD / GPU Dedie</p><div class="product-footer"><span class="product-price-tag">Garantie &amp; SAV inclus</span><button class="btn btn-outline btn-sm" onclick="openDevis('vente')">Devis &#8594;</button></div></article>
-        <article class="product-card" data-category="serveurs"><div class="product-header"><div class="product-icon-box">&#128190;</div><span class="product-badge">Sur Commande</span></div><h3>Serveur Rack / Tour Entreprise</h3><p class="product-specs">Intel Xeon / 32 Go RAM ECC / Double Alim Redondante / RAID 5</p><div class="product-footer"><span class="product-price-tag">Garantie &amp; SAV inclus</span><button class="btn btn-outline btn-sm" onclick="openDevis('serveur')">Devis &#8594;</button></div></article>
-        <article class="product-card" data-category="serveurs"><div class="product-header"><div class="product-icon-box">&#128190;</div><span class="product-badge">Recommande</span></div><h3>Baie de Stockage NAS &amp; Backup</h3><p class="product-specs">NAS 4 Baies / 16 TB Bruts / Sauvegarde Automatisee &amp; Cloud Sync</p><div class="product-footer"><span class="product-price-tag">Garantie &amp; SAV inclus</span><button class="btn btn-outline btn-sm" onclick="openDevis('serveur')">Devis &#8594;</button></div></article>
-        <article class="product-card" data-category="ecrans"><div class="product-header"><div class="product-icon-box">&#128187;</div><span class="product-badge">En Stock</span></div><h3>Ecran Professionnel Ergonomique</h3><p class="product-specs">27 Pouces IPS / 4K UHD / Hub USB-C integre / Filtre Lumiere Bleue</p><div class="product-footer"><span class="product-price-tag">Garantie &amp; SAV inclus</span><button class="btn btn-outline btn-sm" onclick="openDevis('vente')">Devis &#8594;</button></div></article>
-        <article class="product-card" data-category="impression"><div class="product-header"><div class="product-icon-box">&#128424;</div><span class="product-badge">En Stock</span></div><h3>Imprimante Multifonction Reseau Pro</h3><p class="product-specs">Laser Recto-Verso / Reseau Wi-Fi &amp; Ethernet / 40 ppm</p><div class="product-footer"><span class="product-price-tag">Garantie &amp; SAV inclus</span><button class="btn btn-outline btn-sm" onclick="openDevis('vente')">Devis &#8594;</button></div></article>
-        <article class="product-card" data-category="serveurs"><div class="product-header"><div class="product-icon-box">&#128246;</div><span class="product-badge">Reseau</span></div><h3>Switch Administrable 24 Ports PoE+</h3><p class="product-specs">Gigabit Ethernet / 24 Ports PoE+ 370W / 4 Ports SFP+ 10G</p><div class="product-footer"><span class="product-price-tag">Garantie &amp; SAV inclus</span><button class="btn btn-outline btn-sm" onclick="openDevis('reseau')">Devis &#8594;</button></div></article>
-        <article class="product-card" data-category="serveurs"><div class="product-header"><div class="product-icon-box">&#128274;</div><span class="product-badge">Securite</span></div><h3>Onduleur Line-Interactive 1500VA</h3><p class="product-specs">Protection Surtension / Batterie de Secours / Ecran LCD</p><div class="product-footer"><span class="product-price-tag">Garantie &amp; SAV inclus</span><button class="btn btn-outline btn-sm" onclick="openDevis('vente')">Devis &#8594;</button></div></article>
-      </div>
-    </section>
-
-    <!-- ABOUT -->
-    <section id="about" class="section-padding bg-light">
-      <div class="about-grid">
-        <div class="about-content">
-          <span class="section-kicker">A PROPOS DE CANAL INFORMATIQUE</span>
-          <h2>30 Ans de Savoir-Faire &amp; d Engagement IT au Maroc</h2>
-          <p>Fondee en <b>1992</b>, <b>Canal Informatique</b> s est imposee comme un acteur de reference au Maroc dans l integration, la fourniture de materiel et la gestion de parcs informatiques professionnels.</p>
-          <p>Notre mission est d apporter aux PME, grandes institutions et particuliers des solutions informatiques fiables, evolutives et parfaitement securisees. Grace a une equipe d ingenieurs et techniciens certifies, nous veillons a la continuite absolue de votre activite.</p>
-          <div style="margin:24px 0 32px">
-            <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><span style="color:#10b981;font-weight:700">&#10003;</span><span style="font-weight:600">Partenariats privilegies avec les editeurs &amp; constructeurs majeurs</span></div>
-            <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><span style="color:#10b981;font-weight:700">&#10003;</span><span style="font-weight:600">Centres d intervention mobile sur Casablanca, Rabat &amp; Region</span></div>
-            <div style="display:flex;gap:12px;align-items:center"><span style="color:#10b981;font-weight:700">&#10003;</span><span style="font-weight:600">Transparence tarifaire et contrats de maintenance sans surprises</span></div>
-          </div>
-          <div style="display:flex;gap:16px;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="openDevis()">Planifier un audit informatique &#8594;</button>
-            <button class="btn btn-outline" onclick="navTo('contact')">Nous contacter</button>
-          </div>
-        </div>
-        <div class="engagements-grid">
-          <div class="engagement-card"><h4>Expertise de 30+ ans</h4><p>Une presence historique garantissant une connaissance approfondie des besoins technologiques du marche.</p></div>
-          <div class="engagement-card"><h4>Materiel 100% Authentique</h4><p>Tous nos equipements proviennent directement des constructeurs officiels avec garantie fabricant.</p></div>
-          <div class="engagement-card"><h4>Reactivite et Proximite</h4><p>Des equipes mobiles pretes a intervenir rapidement sur Casablanca, Rabat et toute la region.</p></div>
-          <div class="engagement-card"><h4>Accompagnement Sur-Mesure</h4><p>Du conseil avant-vente au suivi sous contrat, nous sommes le partenaire unique de votre SI.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TESTIMONIALS -->
-    <section class="section-padding" style="background:#fff">
-      <div class="section-header-center">
-        <span class="section-kicker">CONFIANCE &amp; RETOURS CLIENTS</span>
-        <h2 class="section-title">Ce que nos clients disent de nous</h2>
-        <p class="section-desc">Decouvrez les temoignages des entreprises et professionnels qui nous font confiance pour la gestion de leur infrastructure.</p>
-        <div class="underline-center"></div>
-      </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card"><div><div class="stars-row">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testimonial-quote">"Canal Informatique gere l integralite de notre parc informatique depuis plus de 8 ans. Leur reactivite lors des pannes et la qualite de leur materiel ont securise notre activite au quotidien."</p></div><div class="testimonial-author"><b>Karim Benjelloun</b><span>Directeur General - Cabinet Fiduciaire</span></div></div>
-        <div class="testimonial-card"><div><div class="stars-row">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testimonial-quote">"Installation complete du reseau et des serveurs de notre nouveau siege realisee sans aucune interruption d activite. Une equipe pro, transparente et tres competente."</p></div><div class="testimonial-author"><b>Sarah Alami</b><span>Responsable Operations - Groupe Logistique</span></div></div>
-        <div class="testimonial-card"><div><div class="stars-row">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testimonial-quote">"Un service de maintenance irreprochable. Des qu un probleme survient, le support prend la main a distance et resout le souci dans les minutes qui suivent."</p></div><div class="testimonial-author"><b>Youssef El Amrani</b><span>Gerant - Societe d Ingenierie</span></div></div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="section-padding bg-light">
-      <div class="section-header-center">
-        <span class="section-kicker">DES REPONSES A VOS QUESTIONS</span>
-        <h2 class="section-title">Foire Aux Questions (FAQ)</h2>
-        <p class="section-desc">Retrouvez les reponses aux interrogations les plus frequentes concernant nos contrats, garanties et interventions.</p>
-        <div class="underline-center"></div>
-      </div>
-      <div class="faq-container">
-        <div class="faq-item open"><button class="faq-question" onclick="toggleFaq(this)"><span>Quelles sont vos zones d intervention pour la maintenance ?</span><span class="faq-chevron">&#8744;</span></button><div class="faq-answer-panel">Nous intervenons principalement sur Grand Casablanca, Rabat, Sale, Kenitra et les zones industrielles environnantes. Pour les contrats d entreprise, nous couvrons egalement d autres regions du Maroc.</div></div>
-        <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Proposez-vous des contrats de maintenance informatique pour les entreprises ?</span><span class="faq-chevron">&#8744;</span></button><div class="faq-answer-panel">Oui ! Nous proposons des contrats annuels modulables comprenant des visites preventives regulieres, le support telephonique illimite, la telemaintenance a distance et des interventions d urgence prioritaires sur site.</div></div>
-        <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Le materiel vendu est-il garanti ?</span><span class="faq-chevron">&#8744;</span></button><div class="faq-answer-panel">Absolument. Tout notre materiel neuf beneficie de la garantie constructeur officielle (1 a 3 ans selon les gammes). Nous assurons egalement le SAV et le remplacement rapide en cas de defaillance.</div></div>
-        <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Comment obtenir un devis gratuit pour un equipement ou une installation ?</span><span class="faq-chevron">&#8744;</span></button><div class="faq-answer-panel">Vous pouvez utiliser notre calculateur de devis en ligne sur ce site, nous envoyer un message via le formulaire de contact, ou nous appeler directement au 0620155466.</div></div>
-        <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Faites-vous la sauvegarde et la recuperation de donnees ?</span><span class="faq-chevron">&#8744;</span></button><div class="faq-answer-panel">Oui, nous mettons en place des solutions de sauvegarde automatique securisees sur NAS local et/ou serveur Cloud crypte, et nous proposons des prestations de recuperation de donnees en cas de panne de disque.</div></div>
-      </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section id="contact" class="section-padding" style="background:#fff">
-      <div class="contact-grid">
-        <div class="contact-info-card">
-          <span class="section-kicker" style="color:#06b6d4">PRENDRE CONTACT</span>
-          <h3>Discutons de Votre Projet IT</h3>
-          <p>Vous souhaitez renouveler vos ordinateurs, installer un reseau haut debit ou securiser la maintenance de votre entreprise ? Contactez nos specialistes.</p>
-          <div class="contact-detail-item"><div class="contact-icon-bubble">&#128222;</div><div class="contact-detail-text"><small>Telephone Direct</small><a href="tel:0620155466">+212 6 20 15 54 66</a></div></div>
-          <div class="contact-detail-item"><div class="contact-icon-bubble">&#9993;</div><div class="contact-detail-text"><small>Adresse Email</small><a href="mailto:contact@canal-informatique.ma">contact@canal-informatique.ma</a></div></div>
-          <div class="contact-detail-item"><div class="contact-icon-bubble">&#128205;</div><div class="contact-detail-text"><small>Zone d Intervention</small><b>Casablanca &amp; Region Rabat-Sale-Kenitra, Maroc</b></div></div>
-          <div class="contact-detail-item"><div class="contact-icon-bubble">&#128336;</div><div class="contact-detail-text"><small>Horaires d Ouverture</small><b>Lun-Ven: 08:30-19:00 | Sam: 09:00-13:00</b></div></div>
-          <div style="margin-top:30px"><a class="whatsapp-card-btn" href="https://wa.me/212620155466?text=Bonjour%20Canal%20Informatique" target="_blank" rel="noreferrer">&#128172; Ecrire sur WhatsApp</a></div>
-        </div>
-        <div class="contact-form-card">
-          <h3>Envoyez-nous un Message</h3>
-          <p style="color:#64748b;margin-bottom:24px">Remplissez ce formulaire et recevez une reponse sous 24 heures maximum.</p>
-          <form id="contact-form" onsubmit="submitContact(event)">
-            <div class="form-row">
-              <div class="form-group"><label>Nom complet *</label><input required type="text" name="name" class="form-input" placeholder="Ex: Mohamed Benali"></div>
-              <div class="form-group"><label>Adresse Email *</label><input required type="email" name="email" class="form-input" placeholder="votre.email@domaine.com"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label>Numero de telephone</label><input type="tel" name="phone" class="form-input" placeholder="06 00 00 00 00"></div>
-              <div class="form-group"><label>Sujet de votre demande *</label><input required type="text" name="subject" class="form-input" placeholder="Ex: Maintenance parc / Achat PC"></div>
-            </div>
-            <div class="form-group"><label>Message ou details du besoin *</label><textarea required name="message" class="form-textarea" rows="5" placeholder="Decrivez votre besoin..."></textarea></div>
-            <button type="submit" id="contact-btn" class="btn btn-primary" style="width:100%">Envoyer mon message &#8594;</button>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div class="footer-brand"><div><b>CANAL</b> <strong>INFORMATIQUE</strong></div><p>Votre partenaire informatique de confiance depuis 1992. Vente de materiel, installation reseau, maintenance et accompagnement d entreprises au Maroc.</p></div>
-      <div class="footer-col"><h4>Navigation</h4><ul class="footer-links"><li><button onclick="navTo('home')">Accueil</button></li><li><button onclick="navTo('services')">Nos Services</button></li><li><button onclick="navTo('products')">Catalogue Produits</button></li><li><button onclick="navTo('about')">A propos de nous</button></li><li><button onclick="navTo('faq')">FAQ</button></li><li><button onclick="navTo('contact')">Contact</button></li></ul></div>
-      <div class="footer-col"><h4>Services Pro</h4><ul class="footer-links"><li><button onclick="navTo('services')">Vente de Materiel</button></li><li><button onclick="navTo('services')">Contrat de Maintenance</button></li><li><button onclick="navTo('services')">Installation &amp; Reseaux</button></li><li><button onclick="navTo('services')">Assistance Hotline 24/7</button></li><li><button onclick="openDevis()">Simulateur de Devis</button></li></ul></div>
-      <div class="footer-col"><h4>Contact &amp; Acces</h4><ul class="footer-links"><li style="color:#94a3b8">&#128222; +212 6 20 15 54 66</li><li style="color:#94a3b8">&#9993; contact@canal-informatique.ma</li><li style="color:#94a3b8">&#128205; Casablanca &amp; Rabat, Maroc</li></ul></div>
-    </div>
-    <div class="footer-bottom"><p>&copy; 2026 Canal Informatique. Tous droits reserves.</p><p>Conception &amp; Infrastructure Web - Canal Informatique Maroc</p></div>
-  </footer>
-
-  <!-- DEVIS MODAL (3 Steps) -->
-  <div class="modal-overlay" id="devis-modal" onclick="if(event.target===this)closeDevis()">
-    <div class="modal-container" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <h3>&#128196; Simulateur de Devis Informatique</h3>
-        <button class="close-btn" onclick="closeDevis()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="steps-progress-bar">
-          <div class="step-indicator active" id="si1"></div>
-          <div class="step-indicator" id="si2"></div>
-          <div class="step-indicator" id="si3"></div>
-        </div>
-        <div style="margin-bottom:20px">
-          <span style="font-size:.8rem;font-weight:700;color:#06b6d4;text-transform:uppercase;letter-spacing:1px" id="step-lbl">Etape 1 sur 3</span>
-          <h4 style="font-size:1.2rem;margin-top:4px" id="step-ttl">1. Quel est votre besoin principal ?</h4>
-        </div>
-        <!-- Step 1 -->
-        <div class="devis-step active" id="ds1">
-          <div class="devis-options-grid">
-            <div class="devis-tile selected" data-g="svc" data-v="vente" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Achat / Renouvellement de Materiel Informatique</span></div>
-            <div class="devis-tile" data-g="svc" data-v="maintenance" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Contrat de Maintenance Informatique &amp; Parc</span></div>
-            <div class="devis-tile" data-g="svc" data-v="reseau" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Installation Reseau, Wi-Fi &amp; Cablage</span></div>
-            <div class="devis-tile" data-g="svc" data-v="serveur" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Installation Serveur, Stockage &amp; Sauvegarde</span></div>
-            <div class="devis-tile" data-g="svc" data-v="assistance" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Depannage &amp; Assistance Ponctuelle</span></div>
-          </div>
-        </div>
-        <!-- Step 2 -->
-        <div class="devis-step" id="ds2">
-          <p style="font-weight:600;font-size:.9rem;margin-bottom:10px">Nombre de postes informatiques :</p>
-          <div class="devis-options-grid" style="margin-bottom:20px">
-            <div class="devis-tile" data-g="sz" data-v="1-5" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>1 a 5 Postes (TPE / Independant)</span></div>
-            <div class="devis-tile selected" data-g="sz" data-v="6-20" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>6 a 20 Postes (PME)</span></div>
-            <div class="devis-tile" data-g="sz" data-v="21-50" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>21 a 50 Postes (Moyenne Entreprise)</span></div>
-            <div class="devis-tile" data-g="sz" data-v="50+" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Plus de 50 Postes (Grande Structure)</span></div>
-          </div>
-          <p style="font-weight:600;font-size:.9rem;margin-bottom:10px">Delai souhaite :</p>
-          <div class="devis-options-grid">
-            <div class="devis-tile selected" data-g="urg" data-v="standard" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Normal (Sous 7 jours)</span></div>
-            <div class="devis-tile" data-g="urg" data-v="urgent" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Urgent (Sous 48h)</span></div>
-            <div class="devis-tile" data-g="urg" data-v="immediate" onclick="pickTile(this)"><div class="devis-tile-radio"></div><span>Projet immediat / Urgence</span></div>
-          </div>
-        </div>
-        <!-- Step 3 -->
-        <div class="devis-step" id="ds3">
-          <form id="devis-form" onsubmit="submitDevis(event)">
-            <div class="form-row">
-              <div class="form-group"><label>Nom complet *</label><input required type="text" id="d-name" class="form-input" placeholder="Votre nom et prenom"></div>
-              <div class="form-group"><label>Nom de l entreprise</label><input type="text" id="d-company" class="form-input" placeholder="Societe / Organisation"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label>Email professionnel *</label><input required type="email" id="d-email" class="form-input" placeholder="votre.email@domaine.com"></div>
-              <div class="form-group"><label>Numero de telephone *</label><input required type="tel" id="d-phone" class="form-input" placeholder="06 00 00 00 00"></div>
-            </div>
-            <div class="form-group"><label>Precisions sur votre projet (Optionnel)</label><textarea id="d-details" class="form-textarea" rows="3" placeholder="Exemple: Nous cherchons a remplacer 10 postes de travail..."></textarea></div>
-          </form>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline" id="prev-btn" onclick="devisGo(-1)" style="display:none">&#8592; Precedent</button>
-        <button type="button" class="btn btn-primary" id="next-btn" onclick="devisGo(1)">Suivant &#8594;</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST CONTAINER -->
-  <div id="toast-container"></div>
-
-  <!-- FABs -->
-  <a id="whatsapp-fab" href="https://wa.me/212620155466?text=Bonjour%20Canal%20Informatique" target="_blank" rel="noreferrer" title="WhatsApp">&#128172;</a>
-  <button id="chat-fab" onclick="toggleChat()" title="Assistant Chat">&#129302;</button>
-
-  <!-- CHATBOT WINDOW -->
-  <div id="chat-window">
-    <div class="chat-header">
-      <span>Assistant Canal IT</span>
-      <button onclick="toggleChat()">&times;</button>
-    </div>
-    <div id="chat-messages">
-      <div class="chat-msg chat-bot">Bonjour ! Je suis l assistant de Canal Informatique. Comment puis-je vous aider aujourd hui ?</div>
-    </div>
-    <form id="chat-form" onsubmit="sendChat(event)">
-      <input type="text" id="chat-input" placeholder="Ecrivez un message..." autocomplete="off">
-      <button type="submit" id="chat-send">&#8594;</button>
-    </form>
-  </div>
-
-  <script>
-  // === SCROLL ===
-  function navTo(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    window.scrollTo({top: el.getBoundingClientRect().top + window.pageYOffset - 80, behavior:'smooth'});
-    document.getElementById('nav-links').classList.remove('open');
-  }
-  function toggleMenu() { document.getElementById('nav-links').classList.toggle('open'); }
-  window.addEventListener('scroll', function() {
-    document.getElementById('site-header').classList.toggle('scrolled', window.scrollY > 20);
-    ['home','services','products','about','faq','contact'].forEach(function(sec) {
-      var el = document.getElementById(sec);
-      var nb = document.getElementById('nav-'+sec);
-      if (el && nb) nb.classList.toggle('active', window.scrollY+200 >= el.offsetTop && window.scrollY+200 < el.offsetTop+el.offsetHeight);
-    });
-  });
-
-  // === DEVIS MODAL ===
-  var dStep = 1;
-  var dData = {svc:'vente', sz:'6-20', urg:'standard'};
-  var stepTitles = ['1. Quel est votre besoin principal ?','2. Quelle est la taille de votre structure ?','3. Vos coordonnees pour recevoir l estimation'];
-
-  function openDevis(pre) {
-    if (pre) {
-      dData.svc = pre;
-      document.querySelectorAll('[data-g="svc"]').forEach(function(t){ t.classList.toggle('selected', t.dataset.v === pre); });
-    }
-    dStep = 1; syncDevis();
-    document.getElementById('devis-modal').classList.add('open');
-  }
-  function closeDevis() { document.getElementById('devis-modal').classList.remove('open'); }
-  function syncDevis() {
-    for (var i=1;i<=3;i++) {
-      document.getElementById('ds'+i).classList.toggle('active', i===dStep);
-      document.getElementById('si'+i).classList.toggle('active', i<=dStep);
-    }
-    var mb = document.querySelector('.modal-body');
-    if (mb) mb.scrollTop = 0;
-    document.getElementById('step-lbl').textContent = 'Etape '+dStep+' sur 3';
-    document.getElementById('step-ttl').textContent = stepTitles[dStep-1];
-    document.getElementById('prev-btn').style.display = dStep > 1 ? '' : 'none';
-    var nb = document.getElementById('next-btn');
-    if (dStep < 3) { nb.textContent = 'Suivant →'; nb.onclick = function(){ devisGo(1); }; }
-    else { nb.textContent = 'Envoyer ma demande de devis'; nb.onclick = function(){ document.getElementById('devis-form').dispatchEvent(new Event('submit',{cancelable:true,bubbles:true})); }; }
-  }
-  function devisGo(dir) { dStep = Math.min(3, Math.max(1, dStep+dir)); syncDevis(); }
-  function pickTile(el) {
-    var g = el.dataset.g;
-    document.querySelectorAll('[data-g="'+g+'"]').forEach(function(t){ t.classList.remove('selected'); });
-    el.classList.add('selected');
-    dData[g] = el.dataset.v;
-  }
-  async function submitDevis(e) {
-    e.preventDefault();
-    var nb = document.getElementById('next-btn');
-    nb.textContent = 'Envoi...'; nb.disabled = true;
-    try {
-      var res = await fetch('/api/devis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({serviceType:dData.svc,size:dData.sz,urgency:dData.urg,name:document.getElementById('d-name').value,email:document.getElementById('d-email').value,phone:document.getElementById('d-phone').value,company:document.getElementById('d-company').value,details:document.getElementById('d-details').value})});
-      var data = await res.json();
-      toast(data.success?'success':'error', data.message);
-      if (data.success) { document.getElementById('devis-form').reset(); closeDevis(); }
-    } catch(err) { toast('error', "Impossible d'envoyer votre demande."); }
-    finally { nb.disabled=false; syncDevis(); }
-  }
-
-  // === CONTACT ===
-  async function submitContact(e) {
-    e.preventDefault();
-    var btn = document.getElementById('contact-btn');
-    btn.textContent='Envoi en cours...'; btn.disabled=true;
-    try {
-      var res = await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target).entries()))});
-      var r = await res.json();
-      toast(r.success?'success':'error', r.message);
-      if (r.success) e.target.reset();
-    } catch(err){ toast('error',"Erreur lors de l'envoi."); }
-    finally{ btn.textContent='Envoyer mon message →'; btn.disabled=false; }
-  }
-
-  // === TOAST ===
-  function toast(type, msg) {
-    var c = document.getElementById('toast-container');
-    var t = document.createElement('div');
-    t.className='toast '+type; t.textContent=msg; c.appendChild(t);
-    setTimeout(function(){ t.remove(); }, 5000);
-  }
-
-  // === PRODUCTS ===
-  var curCat='all';
-  function setFilter(cat, btn) {
-    curCat=cat;
-    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active'); filterProducts();
-  }
-  function filterProducts() {
-    var q = document.getElementById('product-search').value.toLowerCase();
-    document.querySelectorAll('#products-grid .product-card').forEach(function(c){
-      c.style.display = (curCat==='all'||c.dataset.category===curCat) && c.innerText.toLowerCase().includes(q) ? '' : 'none';
-    });
-  }
-
-  // === FAQ ===
-  function toggleFaq(btn) {
-    var item = btn.parentElement;
-    var isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
-    if (!isOpen) item.classList.add('open');
-  }
-
-  // === CHAT ===
-  function toggleChat() { document.getElementById('chat-window').classList.toggle('open'); }
-  async function sendChat(e) {
-    e.preventDefault();
-    var input = document.getElementById('chat-input');
-    var msg = input.value.trim(); if (!msg) return;
-    addChatMsg(msg,'user'); input.value='';
-    try {
-      var res = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
-      var data = await res.json();
-      addChatMsg(data.reply||'Desole, une erreur est survenue.','bot');
-    } catch(err){ addChatMsg('Une erreur est survenue.','bot'); }
-  }
-  function addChatMsg(text, sender) {
-    var msgs = document.getElementById('chat-messages');
-    var d = document.createElement('div');
-    d.className='chat-msg '+(sender==='user'?'chat-user':'chat-bot');
-    d.textContent=text; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
-  }
-  </script>
-</body>
+    <title>Canal Informatique | Expert Matériel & Maintenance Informatique au Maroc</title>
+    <script type="module" crossorigin src="/assets/index-BqpyvEgL.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DpDq_su7.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>

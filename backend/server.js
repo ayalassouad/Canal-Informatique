@@ -37,7 +37,10 @@ app.use(cors({
   origin: function(origin, callback) {
     const allowed = [
       "http://localhost:5173",
+      "http://localhost:5000",
+      "https://canal-informatique.onrender.com",
       "https://canal-informatique-1.onrender.com",
+      "https://canal-informatique-backend.onrender.com",
       ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(",") : [])
     ];
     if (!origin || allowed.includes(origin)) {

@@ -1,6 +1,7 @@
 import os
 import time
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 from dotenv import load_dotenv
 import resend
 from models import db, Contact, Devis
@@ -8,7 +9,9 @@ from models import db, Contact, Devis
 load_dotenv()
 
 app = Flask(__name__, static_folder='static')
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///database.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -42,11 +45,20 @@ def send_email(subject, html, reply_to=None):
 # --- Static File Serving ---
 @app.route('/')
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    if os.path.exists(os.path.join(app.static_folder, 'index.html')):
+        return send_from_directory(app.static_folder, 'index.html')
+    return jsonify({"success": True, "message": "Canal Informatique API Active"})
 
 @app.route('/<path:path>')
 def static_files(path):
-    return send_from_directory(app.static_folder, path)
+    target = os.path.join(app.static_folder, path)
+    if os.path.exists(target) and not os.path.isdir(target):
+        return send_from_directory(app.static_folder, path)
+    if path.startswith('api/'):
+        return jsonify({"success": False, "message": "Endpoint non trouvé."}), 404
+    if os.path.exists(os.path.join(app.static_folder, 'index.html')):
+        return send_from_directory(app.static_folder, 'index.html')
+    return jsonify({"success": False, "message": "Ressource non trouvée."}), 404
 
 # --- API Endpoints ---
 @app.route('/api/health', methods=['GET'])
