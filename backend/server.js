@@ -21,6 +21,8 @@ function getResend() {
 }
 const app = express();
 const PORT = process.env.PORT || 5000;
+const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434";
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "qwen2.5:3b";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dataDir = path.join(__dirname, "data");
@@ -232,6 +234,75 @@ app.get("/api/devis", async (_, res) => {
     res.json({ success: true, devis: JSON.parse(data) });
   } catch {
     res.json({ success: true, devis: [] });
+  }
+});
+
+async function getOllamaReply(message) {
+  try {
+    const response = await fetch(`${OLLAMA_URL}/api/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: OLLAMA_MODEL,
+        prompt: `Tu es l'assistant de Canal Informatique, une société marocaine de maintenance informatique et de vente de matériel. Réponds uniquement en français, de façon courte et professionnelle. Mentionne les services suivants si nécessaire: maintenance informatique, support, réseaux Wi-Fi, matériel informatique, cybersécurité, installation, devis. Réponds à la question du client: ${message}`,
+        stream: false,
+        options: { temperature: 0.4 }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ollama responded with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    const reply = data?.response?.trim();
+    if (reply) return reply;
+  } catch (error) {
+    console.warn("Ollama unavailable, using fallback logic:", error?.message || error);
+  }
+
+  return null;
+}
+
+app.post("/api/chat", async (req, res) => {
+  try {
+    const message = String(req.body?.message || "").trim();
+
+    if (!message) {
+      return res.status(400).json({
+        success: false,
+        message: "Veuillez saisir un message pour l’assistant."
+      });
+    }
+
+    const aiReply = await getOllamaReply(message);
+    if (aiReply) {
+      return res.json({ success: true, reply: aiReply });
+    }
+
+    const lowerMessage = message.toLowerCase();
+    let reply = "Bonjour ! Je peux vous renseigner sur nos services, nos devis et nos coordonnées.";
+
+    if (lowerMessage.includes("bonjour") || lowerMessage.includes("salut") || lowerMessage.includes("hello")) {
+      reply = "Bonjour ! Je suis l’assistant de Canal Informatique. Que puis-je faire pour vous ?";
+    } else if (lowerMessage.includes("maintenance") || lowerMessage.includes("support") || lowerMessage.includes("incident") || lowerMessage.includes("panne")) {
+      reply = "Nous proposons la maintenance informatique, la télémaintenance, les interventions sur site et la gestion de parc informatique pour PME et entreprises.";
+    } else if (lowerMessage.includes("reseau") || lowerMessage.includes("wifi") || lowerMessage.includes("internet") || lowerMessage.includes("cablage")) {
+      reply = "Nous réalisons l’installation et la sécurisation des réseaux Wi‑Fi, câblage, switchs, pare-feu et solutions de connectivité professionnelle.";
+    } else if (lowerMessage.includes("prix") || lowerMessage.includes("tarif") || lowerMessage.includes("devis") || lowerMessage.includes("budget")) {
+      reply = "Pour obtenir un devis personnalisé, utilisez le bouton “Demander un devis” sur la page ou envoyez-nous votre besoin via le formulaire de contact.";
+    } else if (lowerMessage.includes("contact") || lowerMessage.includes("telephone") || lowerMessage.includes("appel") || lowerMessage.includes("call")) {
+      reply = "Vous pouvez nous joindre au +212 6 20 15 54 66 ou via le formulaire de contact disponible sur le site.";
+    } else if (lowerMessage.includes("vente") || lowerMessage.includes("matériel") || lowerMessage.includes("ordinateur") || lowerMessage.includes("pc")) {
+      reply = "Nous vendons du matériel informatique professionnel, ordinateurs, serveurs, écrans, switchs, NAS et solutions d’infrastructure adaptées à votre activité.";
+    } else if (lowerMessage.includes("cyber") || lowerMessage.includes("sécurité") || lowerMessage.includes("security")) {
+      reply = "Nous mettons en place des solutions de sécurité informatique, audits, pare-feu, sécurisation des accès et protection de votre infrastructure.";
+    }
+
+    res.json({ success: true, reply });
+  } catch (error) {
+    console.error("Chat error:", error);
+    res.status(500).json({ success: false, message: "Une erreur est survenue." });
   }
 });
 

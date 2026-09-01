@@ -11,6 +11,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import DevisModal from "./components/DevisModal";
 import WhatsAppFab from "./components/WhatsAppFab";
+import Chatbot from "./components/Chatbot";
 import Toast from "./components/Toast";
 import "./styles.css";
 
@@ -96,6 +97,7 @@ export default function App() {
       />
 
       <WhatsAppFab />
+      <Chatbot />
       <Toast toast={toast} onClose={() => setToast(null)} />
     </>
   );
