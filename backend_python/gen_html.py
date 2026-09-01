@@ -60,12 +60,12 @@ html = """<!DOCTYPE html>
       <span class="logo-text"><b>CANAL</b><strong>INFORMATIQUE</strong><small>Votre partenaire informatique</small></span>
     </button>
     <nav class="nav-links" id="nav-links">
-      <button class="nav-link" id="nav-home" onclick="scrollTo('home')">Accueil</button>
-      <button class="nav-link" id="nav-services" onclick="scrollTo('services')">Services</button>
-      <button class="nav-link" id="nav-products" onclick="scrollTo('products')">Produits</button>
-      <button class="nav-link" id="nav-about" onclick="scrollTo('about')">A propos</button>
-      <button class="nav-link" id="nav-faq" onclick="scrollTo('faq')">FAQ</button>
-      <button class="nav-link" id="nav-contact" onclick="scrollTo('contact')">Contact</button>
+      <button class="nav-link" id="nav-home" onclick="navTo('home')">Accueil</button>
+      <button class="nav-link" id="nav-services" onclick="navTo('services')">Services</button>
+      <button class="nav-link" id="nav-products" onclick="navTo('products')">Produits</button>
+      <button class="nav-link" id="nav-about" onclick="navTo('about')">A propos</button>
+      <button class="nav-link" id="nav-faq" onclick="navTo('faq')">FAQ</button>
+      <button class="nav-link" id="nav-contact" onclick="navTo('contact')">Contact</button>
     </nav>
     <div class="nav-actions">
       <button class="btn btn-primary desktop-quote-btn btn-sm" id="btn-devis-header" onclick="openDevis()">Demander un devis</button>
@@ -85,7 +85,7 @@ html = """<!DOCTYPE html>
           <p class="hero-description">Vente de materiel informatique professionnel, installation reseau, maintenance preventive et support reactif. Nous securisons et optimisons vos systemes pour une productivite sans interruption.</p>
           <div class="hero-cta-group">
             <button class="btn btn-primary" onclick="openDevis()">Simuler un devis</button>
-            <button class="btn btn-secondary" onclick="scrollTo('services')">Nos services &#8594;</button>
+            <button class="btn btn-secondary" onclick="navTo('services')">Nos services &#8594;</button>
             <a class="btn btn-secondary" href="https://wa.me/212620155466?text=Bonjour%20Canal%20Informatique" target="_blank" rel="noreferrer">&#128172; WhatsApp</a>
           </div>
           <div class="hero-features-list">
@@ -189,7 +189,7 @@ html = """<!DOCTYPE html>
           </div>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <button class="btn btn-primary" onclick="openDevis()">Planifier un audit informatique &#8594;</button>
-            <button class="btn btn-outline" onclick="scrollTo('contact')">Nous contacter</button>
+            <button class="btn btn-outline" onclick="navTo('contact')">Nous contacter</button>
           </div>
         </div>
         <div class="engagements-grid">
@@ -270,8 +270,8 @@ html = """<!DOCTYPE html>
   <footer class="site-footer">
     <div class="footer-grid">
       <div class="footer-brand"><div><b>CANAL</b> <strong>INFORMATIQUE</strong></div><p>Votre partenaire informatique de confiance depuis 1992. Vente de materiel, installation reseau, maintenance et accompagnement d entreprises au Maroc.</p></div>
-      <div class="footer-col"><h4>Navigation</h4><ul class="footer-links"><li><button onclick="scrollTo('home')">Accueil</button></li><li><button onclick="scrollTo('services')">Nos Services</button></li><li><button onclick="scrollTo('products')">Catalogue Produits</button></li><li><button onclick="scrollTo('about')">A propos de nous</button></li><li><button onclick="scrollTo('faq')">FAQ</button></li><li><button onclick="scrollTo('contact')">Contact</button></li></ul></div>
-      <div class="footer-col"><h4>Services Pro</h4><ul class="footer-links"><li><button onclick="scrollTo('services')">Vente de Materiel</button></li><li><button onclick="scrollTo('services')">Contrat de Maintenance</button></li><li><button onclick="scrollTo('services')">Installation &amp; Reseaux</button></li><li><button onclick="scrollTo('services')">Assistance Hotline 24/7</button></li><li><button onclick="openDevis()">Simulateur de Devis</button></li></ul></div>
+      <div class="footer-col"><h4>Navigation</h4><ul class="footer-links"><li><button onclick="navTo('home')">Accueil</button></li><li><button onclick="navTo('services')">Nos Services</button></li><li><button onclick="navTo('products')">Catalogue Produits</button></li><li><button onclick="navTo('about')">A propos de nous</button></li><li><button onclick="navTo('faq')">FAQ</button></li><li><button onclick="navTo('contact')">Contact</button></li></ul></div>
+      <div class="footer-col"><h4>Services Pro</h4><ul class="footer-links"><li><button onclick="navTo('services')">Vente de Materiel</button></li><li><button onclick="navTo('services')">Contrat de Maintenance</button></li><li><button onclick="navTo('services')">Installation &amp; Reseaux</button></li><li><button onclick="navTo('services')">Assistance Hotline 24/7</button></li><li><button onclick="openDevis()">Simulateur de Devis</button></li></ul></div>
       <div class="footer-col"><h4>Contact &amp; Acces</h4><ul class="footer-links"><li style="color:#94a3b8">&#128222; +212 6 20 15 54 66</li><li style="color:#94a3b8">&#9993; contact@canal-informatique.ma</li><li style="color:#94a3b8">&#128205; Casablanca &amp; Rabat, Maroc</li></ul></div>
     </div>
     <div class="footer-bottom"><p>&copy; 2026 Canal Informatique. Tous droits reserves.</p><p>Conception &amp; Infrastructure Web - Canal Informatique Maroc</p></div>
@@ -366,10 +366,10 @@ html = """<!DOCTYPE html>
 
   <script>
   // === SCROLL ===
-  function scrollTo(id) {
+  function navTo(id) {
     var el = document.getElementById(id);
     if (!el) return;
-    window.scroll({top: el.getBoundingClientRect().top + window.pageYOffset - 80, behavior:'smooth'});
+    window.scrollTo({top: el.getBoundingClientRect().top + window.pageYOffset - 80, behavior:'smooth'});
     document.getElementById('nav-links').classList.remove('open');
   }
   function toggleMenu() { document.getElementById('nav-links').classList.toggle('open'); }
