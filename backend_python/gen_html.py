@@ -14,12 +14,16 @@ html = """<!DOCTYPE html>
   <style>
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,13,26,.85);backdrop-filter:blur(8px);z-index:1000;place-items:center;padding:12px;overflow-y:auto}
     .modal-overlay.open{display:grid}
-    .modal-container{max-height:92vh;display:flex;flex-direction:column}
-    .modal-body{overflow-y:auto;flex:1;max-height:calc(92vh - 70px)}
+    .modal-container{max-height:85vh;display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden;width:100%;max-width:650px}
+    .modal-header{flex-shrink:0;background:#040d1a;color:#fff;padding:20px 30px;display:flex;align-items:center;justify-content:space-between}
+    .modal-body{overflow-y:auto;flex:1;padding:24px 30px}
+    .modal-footer{flex-shrink:0;background:#fff;padding:16px 30px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;gap:12px}
     @media (max-width: 768px) {
-      .modal-overlay{padding:8px;align-items:flex-end}
-      .modal-container{max-height:94vh;width:100%;border-radius:16px 16px 0 0}
-      .modal-body{padding:16px 16px 20px}
+      .modal-overlay{padding:0;align-items:flex-end}
+      .modal-container{max-height:85vh;width:100%;border-radius:16px 16px 0 0}
+      .modal-header{padding:16px 20px}
+      .modal-body{padding:16px 20px 20px}
+      .modal-footer{padding:12px 16px 16px}
       .devis-tile{padding:10px 12px;font-size:0.875rem}
       .devis-options-grid{gap:8px;margin-bottom:14px}
     }
@@ -343,10 +347,10 @@ html = """<!DOCTYPE html>
             <div class="form-group"><label>Precisions sur votre projet (Optionnel)</label><textarea id="d-details" class="form-textarea" rows="3" placeholder="Exemple: Nous cherchons a remplacer 10 postes de travail..."></textarea></div>
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline" id="prev-btn" onclick="devisGo(-1)" style="display:none">&#8592; Precedent</button>
-          <button type="button" class="btn btn-primary" id="next-btn" onclick="devisGo(1)">Suivant &#8594;</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="prev-btn" onclick="devisGo(-1)" style="display:none">&#8592; Precedent</button>
+        <button type="button" class="btn btn-primary" id="next-btn" onclick="devisGo(1)">Suivant &#8594;</button>
       </div>
     </div>
   </div>
@@ -410,6 +414,8 @@ html = """<!DOCTYPE html>
       document.getElementById('ds'+i).classList.toggle('active', i===dStep);
       document.getElementById('si'+i).classList.toggle('active', i<=dStep);
     }
+    var mb = document.querySelector('.modal-body');
+    if (mb) mb.scrollTop = 0;
     document.getElementById('step-lbl').textContent = 'Etape '+dStep+' sur 3';
     document.getElementById('step-ttl').textContent = stepTitles[dStep-1];
     document.getElementById('prev-btn').style.display = dStep > 1 ? '' : 'none';
