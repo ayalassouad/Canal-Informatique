@@ -1,17 +1,28 @@
 services:
   - type: web
-    name: canal-informatique
-    runtime: python
-    rootDir: backend_python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    name: canal-informatique-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: DATABASE_URL
-        value: sqlite:///database.db
+      - key: PORT
+        value: 10000
+      - key: OLLAMA_URL
+        value: http://localhost:11434
+      - key: OLLAMA_MODEL
+        value: qwen2.5:3b
       - key: RESEND_API_KEY
         sync: false
       - key: TARGET_EMAIL
         sync: false
-    healthCheckPath: /api/health
+
+  - type: static
+    name: canal-informatique-frontend
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://canal-informatique-api.onrender.com

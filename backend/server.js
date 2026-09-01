@@ -28,6 +28,13 @@ const __dirname = path.dirname(__filename);
 const dataDir = path.join(__dirname, "data");
 const contactsFile = path.join(dataDir, "contacts.json");
 const devisFile = path.join(dataDir, "devis.json");
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+  "https://canal-informatique-frontend.onrender.com",
+  "https://canal-informatique.onrender.com"
+];
 
 // The verified Resend sender domain (always works without domain verification)
 const FROM_ADDRESS = "Canal Informatique <onboarding@resend.dev>";
@@ -36,7 +43,25 @@ const TO_ADDRESS = process.env.TARGET_EMAIL || "lassouadaya313@gmail.com";
 
 // ── Middleware ──────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error("CORS not allowed"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+}));
+app.options("*", cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error("CORS not allowed"));
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
