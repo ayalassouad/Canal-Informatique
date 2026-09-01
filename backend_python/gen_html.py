@@ -12,8 +12,17 @@ html = """<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,13,26,.85);backdrop-filter:blur(8px);z-index:1000;place-items:center;padding:20px}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,13,26,.85);backdrop-filter:blur(8px);z-index:1000;place-items:center;padding:12px;overflow-y:auto}
     .modal-overlay.open{display:grid}
+    .modal-container{max-height:92vh;display:flex;flex-direction:column}
+    .modal-body{overflow-y:auto;flex:1;max-height:calc(92vh - 70px)}
+    @media (max-width: 768px) {
+      .modal-overlay{padding:8px;align-items:flex-end}
+      .modal-container{max-height:94vh;width:100%;border-radius:16px 16px 0 0}
+      .modal-body{padding:16px 16px 20px}
+      .devis-tile{padding:10px 12px;font-size:0.875rem}
+      .devis-options-grid{gap:8px;margin-bottom:14px}
+    }
     .devis-step{display:none}.devis-step.active{display:block}
     #toast-container{position:fixed;top:100px;right:30px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
     #chat-fab{position:fixed;bottom:30px;right:30px;width:60px;height:60px;background:linear-gradient(135deg,#2563eb,#0284c7);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.6rem;box-shadow:0 4px 14px rgba(37,99,235,.5);cursor:pointer;z-index:500;transition:.3s;border:none}
