@@ -64,7 +64,7 @@ const extended = {
 };
 
 export function t(language, value) {
-  return translations[language]?.[value] || value;
+  return text[language]?.[value] || value;
 }
 
 export function localizedData(language) {
