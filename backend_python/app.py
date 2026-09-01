@@ -9,12 +9,19 @@ from models import db, Contact, Devis
 load_dotenv()
 
 app = Flask(__name__, static_folder='static')
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///database.db')
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+@app.after_request
+def after_request(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    return response
+
 db.init_app(app)
+
 
 if os.getenv('RESEND_API_KEY'):
     resend.api_key = os.getenv('RESEND_API_KEY')
@@ -69,9 +76,11 @@ def health():
         "status": "healthy"
     })
 
-@app.route('/api/contact', methods=['POST'])
+@app.route('/api/contact', methods=['POST', 'OPTIONS'])
 def contact():
-    data = request.json
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+    data = request.json or {}
     name = data.get('name', '').strip()
     email = data.get('email', '').strip()
     phone = data.get('phone', '').strip()
@@ -108,9 +117,11 @@ def contact():
 
     return jsonify({"success": True, "message": "Votre demande a bien été envoyée."}), 201
 
-@app.route('/api/devis', methods=['POST'])
+@app.route('/api/devis', methods=['POST', 'OPTIONS'])
 def devis():
-    data = request.json
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+    data = request.json or {}
     name = data.get('name', '').strip()
     email = data.get('email', '').strip()
     phone = data.get('phone', '').strip()
@@ -145,9 +156,11 @@ def devis():
     return jsonify({"success": True, "message": "Votre demande de devis a été enregistrée."}), 201
 
 # --- Chatbot Endpoint ---
-@app.route('/api/chat', methods=['POST'])
+@app.route('/api/chat', methods=['POST', 'OPTIONS'])
 def chat():
-    data = request.json
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+    data = request.json or {}
     user_message = data.get('message', '').lower()
     
     # Simple rule-based logic

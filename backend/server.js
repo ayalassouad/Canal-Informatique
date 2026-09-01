@@ -34,22 +34,10 @@ const TO_ADDRESS = process.env.TARGET_EMAIL || "lassouadaya313@gmail.com";
 
 // ── Middleware ──────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: function(origin, callback) {
-    const allowed = [
-      "http://localhost:5173",
-      "http://localhost:5000",
-      "https://canal-informatique.onrender.com",
-      "https://canal-informatique-1.onrender.com",
-      "https://canal-informatique-backend.onrender.com",
-      ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(",") : [])
-    ];
-    if (!origin || allowed.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS: " + origin));
-    }
-  },
-  credentials: true
+  origin: true,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
 app.use(express.json({ limit: "1mb" }));
 
