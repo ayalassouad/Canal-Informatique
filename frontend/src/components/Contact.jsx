@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Phone, Mail, MapPin, MessageCircle, Send, Clock, CheckCircle2 } from "lucide-react";
 import { COMPANY_INFO } from "../data/mockData";
 
-const API_URL = import.meta.env.VITE_API_URL !== undefined ? import.meta.env.VITE_API_URL : "https://canal-informatique.onrender.com";
+const API_URL = window.location.hostname === "localhost"
+  ? "http://localhost:5000"
+  : "https://canal-informatique-backend.onrender.com";
 
 export default function Contact({ showToast }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: canal-informatique-api
+    name: canal-informatique-backend
     runtime: node
     rootDir: backend
     buildCommand: npm install
@@ -25,4 +25,4 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        value: https://canal-informatique-api.onrender.com
+        value: https://canal-informatique-backend.onrender.com

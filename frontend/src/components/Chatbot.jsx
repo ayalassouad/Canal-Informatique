@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { MessageSquareText, SendHorizonal, X, Bot, User } from "lucide-react";
 
-const API_URL =
-  import.meta.env.VITE_API_URL ??
-  (window.location.hostname === "localhost" ? "http://localhost:5000" : "https://canal-informatique.onrender.com");
+const API_URL = window.location.hostname === "localhost"
+  ? "http://localhost:5000"
+  : "https://canal-informatique-backend.onrender.com";
 
 const quickActions = [
   "Devis",
